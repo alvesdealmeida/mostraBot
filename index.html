@@ -7,104 +7,72 @@
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet" />
   
   <style>
-    /* 1. RESET E CORES */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --up-color: #3A8FE8; --down-color: #E8773A; --left-color: #9B59B6; --right-color: #27AE60;
       --bg: #FFF8F0; --card: #FFFFFF; --text: #1A1A2E; --radius: 18px;
     }
 
-    body, html { 
-      height: 100%; 
-      background: var(--bg); 
-      font-family: 'Nunito', sans-serif; 
-      overflow: hidden; 
-    }
+    body, html { height: 100%; background: var(--bg); font-family: 'Nunito', sans-serif; overflow: hidden; }
 
-    /* 2. LÓGICA DE BLOQUEIO VIA CSS (Mais rápido que JS) */
+    /* BLOQUEIO PARA DESKTOP */
     #pc-blocker {
-      position: fixed; inset: 0;
-      background: #1a1a2e; color: white;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: center;
+      position: fixed; inset: 0; background: #1a1a2e; color: white;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
       z-index: 9999; text-align: center; padding: 20px;
     }
-
     #app-content { display: none; height: 100%; flex-direction: column; }
 
-    /* Se for tela pequena (mobile) ou dispositivo com touch (tablet), esconde o bloqueio */
     @media (max-width: 1024px) {
       #pc-blocker { display: none; }
       #app-content { display: flex; }
     }
 
-    /* Estilos adicionais para o Blocker */
-    #pc-blocker h1 { font-family: 'Fredoka One', cursive; margin-bottom: 15px; }
-    #pc-blocker p { opacity: 0.8; max-width: 400px; line-height: 1.5; }
-
-    /* 3. APP UI */
-    .app-header {
-      background: var(--card); padding: 12px;
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 2px solid #eee;
-    }
+    /* INTERFACE */
+    .app-header { background: var(--card); padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; }
     .brand { font-family: 'Fredoka One', cursive; color: var(--up-color); font-size: 20px; }
-
-    .app-main {
-      flex: 1; padding: 15px;
-      display: flex; flex-direction: column;
-      justify-content: space-around;
-    }
+    .app-main { flex: 1; padding: 15px; display: flex; flex-direction: column; justify-content: space-around; }
 
     .grid {
-      display: grid; grid-template-columns: repeat(6, 1fr);
-      gap: 4px; background: white; padding: 8px;
-      border-radius: var(--radius); border: 2px solid #ddd;
-      width: 100%; max-width: 450px; aspect-ratio: 1/1; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; background: white; padding: 8px;
+      border-radius: var(--radius); border: 2px solid #ddd; width: 100%; max-width: 400px; aspect-ratio: 1/1; margin: 0 auto;
     }
     .cell {
       background: #f9f9f9; border: 1px solid #eee; border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Fredoka One', cursive; font-size: 14px;
+      display: flex; align-items: center; justify-content: center; font-family: 'Fredoka One', cursive; font-size: 14px;
     }
     .cell.robot { background: #EEF6FF; border: 2px solid var(--up-color); font-size: 24px; }
     .cell.target { background: #FFF9D6; border: 2px solid #F5C842; }
 
-    .controls { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 450px; margin: 0 auto; }
+    /* BOTÕES COM SETAS */
+    .controls { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 400px; margin: 0 auto; }
     .cmd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .btn {
-      border: none; border-radius: 15px; padding: 15px;
-      color: white; font-family: 'Fredoka One', cursive;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.2); font-size: 14px;
-      cursor: pointer;
+      border: none; border-radius: 15px; padding: 12px; color: white;
+      font-family: 'Fredoka One', cursive; font-size: 14px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.2);
     }
+    .btn span { font-size: 20px; margin-bottom: 2px; }
     .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+    
     .up { background: var(--up-color); grid-column: 2; }
     .left { background: var(--left-color); grid-column: 1; }
     .down { background: var(--down-color); grid-column: 2; }
     .right { background: var(--right-color); grid-column: 3; }
 
-    .exec-btn { 
-      background: #27AE60; padding: 18px; font-size: 18px; 
-      box-shadow: 0 6px 0 #1A7A42; margin-top: 5px;
-    }
-
-    .status { 
-      background: #eee; padding: 10px; border-radius: 10px; 
-      text-align: center; font-weight: 900; font-size: 14px;
-    }
+    .exec-btn { background: #27AE60; padding: 15px; font-size: 18px; box-shadow: 0 6px 0 #1A7A42; margin-top: 5px; }
+    .status { background: #eee; padding: 8px; border-radius: 10px; text-align: center; font-weight: 900; font-size: 14px; }
   </style>
 </head>
 <body>
 
-  <!-- TELA DE BLOQUEIO -->
   <div id="pc-blocker">
     <div style="font-size: 60px;">🚫</div>
     <h1>Acesso Negado</h1>
-    <p>O <b>Mostrabot</b> foi projetado exclusivamente para uso em <b>Celulares e Tablets</b>.<br><br>Abra este link no seu dispositivo móvel para jogar.</p>
+    <p>O <b>Mostrabot</b> só funciona em <b>Celulares e Tablets</b>.</p>
   </div>
 
-  <!-- CONTEÚDO DO JOGO -->
   <div id="app-content">
     <header class="app-header">
       <div class="brand">🤖 Mostrabot</div>
@@ -114,44 +82,39 @@
     <main class="app-main">
       <div style="display:flex; justify-content: space-between; align-items:center;">
         <div style="font-weight:900">🎯 Alvo: <span id="target-txt" style="color:var(--up-color)">?</span></div>
-        <button onclick="setRandomTarget()" style="padding:5px 10px; border-radius:8px; border:1px solid #ccc; background:#fff; font-weight:bold; cursor:pointer">🎲 Sortear</button>
+        <button onclick="setRandomTarget()" style="padding:5px 10px; border-radius:8px; border:1px solid #ccc; background:#fff; font-weight:bold">🎲 Sortear</button>
       </div>
 
       <div class="grid" id="grid"></div>
-
       <div class="status" id="status-bar">Programe os movimentos!</div>
 
       <div class="controls">
         <div class="cmd-grid">
-          <button class="btn up" onclick="addCmd('up')">FRENTE</button>
-          <button class="btn left" onclick="addCmd('left')">ESQ</button>
-          <button class="btn down" onclick="addCmd('down')">TRÁS</button>
-          <button class="btn right" onclick="addCmd('right')">DIR</button>
+          <button class="btn up" onclick="addCmd('up')"><span>↑</span>FRENTE</button>
+          <button class="btn left" onclick="addCmd('left')"><span>←</span>ESQ</button>
+          <button class="btn down" onclick="addCmd('down')"><span>↓</span>TRÁS</button>
+          <button class="btn right" onclick="addCmd('right')"><span>→</span>DIR</button>
         </div>
-        <button class="btn exec-btn" id="btn-exec" onclick="run()">EXECUTAR MOVIMENTO</button>
-        <button onclick="resetAll()" style="background:none; border:none; color:#777; font-weight:bold; text-decoration:underline; cursor:pointer; margin-top:5px">Reiniciar Tudo</button>
+        <button class="btn exec-btn" id="btn-exec" onclick="run()">▶ EXECUTAR</button>
+        <button onclick="resetAll()" style="background:none; border:none; color:#777; font-weight:bold; text-decoration:underline; margin-top:5px">Reiniciar</button>
       </div>
     </main>
   </div>
 
+  <!-- SONS -->
+  <audio id="snd-move" src="move.mp3"></audio>
+  <audio id="snd-win" src="win.mp3"></audio>
+  <audio id="snd-error" src="error.mp3"></audio>
+
 <script>
-  // VERIFICAÇÃO REFORÇADA
-  function init() {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isSmallScreen = window.innerWidth <= 1024;
-    
-    // Se for desktop (não mobile e tela grande), mantemos o bloqueio
-    if (!isMobile && !isSmallScreen) {
-      console.log("Acesso via Desktop detectado.");
-      return; 
-    }
-
-    // Caso contrário, inicializa o jogo
-    buildGrid();
-  }
-
   const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
   let robot = { r: 0, c: 0 }, target = null, cmds = [], running = false;
+
+  // Toca som com segurança
+  function playSound(id) {
+    const s = document.getElementById(id);
+    if(s) { s.currentTime = 0; s.play().catch(()=>{}); }
+  }
 
   function buildGrid() {
     const g = document.getElementById('grid');
@@ -178,10 +141,9 @@
   }
 
   function addCmd(d) { 
-    if(!running) { 
+    if(!running && cmds.length < 20) { 
       cmds.push(d); 
-      const s = document.getElementById('status-bar');
-      s.textContent = `Comandos: ${cmds.length} adicionados`;
+      document.getElementById('status-bar').textContent = `Comandos: ${cmds.length}`;
     } 
   }
 
@@ -199,14 +161,11 @@
   }
 
   async function run() {
-    if(running || !target || !cmds.length) {
-      if(!target) alert("Sorteie ou escolha um alvo clicando nas letras!");
-      return;
-    }
+    if(running || !target || !cmds.length) return;
     running = true;
-    document.getElementById('btn-exec').style.opacity = '0.5';
+    const btn = document.getElementById('btn-exec');
+    btn.style.opacity = '0.5';
 
-    // Copia os comandos e limpa a fila original para o próximo round
     const queue = [...cmds];
     cmds = [];
 
@@ -216,21 +175,26 @@
       let nR = robot.r + move[0], nC = robot.c + move[1];
 
       if(nR < 0 || nR > 5 || nC < 0 || nC > 5) {
-        setStatus("💥 Bateu na parede!", "#ff0000"); 
+        setStatus("💥 Bateu!", "#ff0000");
+        playSound('snd-error');
         break;
       }
+      
       robot.r = nR; robot.c = nC;
+      playSound('snd-move');
       render();
-      await new Promise(r => setTimeout(r, 400));
+      await new Promise(r => setTimeout(r, 500));
     }
 
     if(robot.r === target.r && robot.c === target.c) {
-      setStatus("🎉 CHEGOU AO ALVO!", "#27AE60");
+      setStatus("🎉 CONSEGUI!", "#27AE60");
+      playSound('snd-win');
     } else {
-      setStatus("❌ Parou no lugar errado!", "#E8773A");
+      setStatus("❌ Tente de novo", "#E8773A");
     }
+    
     running = false;
-    document.getElementById('btn-exec').style.opacity = '1';
+    btn.style.opacity = '1';
   }
 
   function setStatus(t, c) {
@@ -246,7 +210,7 @@
     render();
   }
 
-  window.onload = init;
+  window.onload = buildGrid;
 </script>
 </body>
 </html>
