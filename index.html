@@ -637,13 +637,13 @@
 </head>
 <body>
 
-  <div id="desktop-warning">
-  <div class="warning-content">
-    <span>🤖</span>
-    <h2>Acesso Restrito</h2>
-    <p>O Mostrabot foi projetado exclusivamente para Celulares e Tablets.</p>
-    <p>Por favor, abra este link no seu dispositivo móvel.</p>
-  </div>
+ <div id="aviso-desktop-somente" style="display:none; position:fixed; inset:0; background:#FFF8F0; z-index:999999; flex-direction:column; justify-content:center; align-items:center; text-align:center; font-family:'Fredoka One', cursive; padding:20px;">
+  <span style="font-size: 80px;">📱</span>
+  <h1 style="color: #3A8FE8; font-size: 24px;">Acesso pelo Celular</h1>
+  <p style="font-family: 'Nunito', sans-serif; color: #7A7A8A;">
+    Detectamos que você está em um Computador.<br>
+    <b>Abra no seu Celular para jogar!</b>
+  </p>
 </div>
 
 <header class="app-header">
@@ -1077,6 +1077,32 @@ function launchConfetti() {
 }
 
 init();
+</script>
+<script>
+function controlarAcesso() {
+    const aviso = document.getElementById('aviso-desktop-somente');
+    const header = document.querySelector('.app-header');
+    const main = document.querySelector('.app-main');
+    
+    // Detecta se é dispositivo móvel (Touch) ou tela pequena
+    const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
+
+    if (isMobile) {
+        // É CELULAR OU TABLET: Garante que o jogo apareça e o aviso suma
+        aviso.style.setProperty('display', 'none', 'important');
+        if(header) header.style.display = 'flex';
+        if(main) main.style.display = 'flex';
+    } else {
+        // É DESKTOP: Mostra o aviso e esconde o jogo
+        aviso.style.setProperty('display', 'flex', 'important');
+        if(header) header.style.display = 'none';
+        if(main) main.style.display = 'none';
+    }
+}
+
+// Executa ao carregar e ao girar a tela
+window.addEventListener('load', controlarAcesso);
+window.addEventListener('resize', controlarAcesso);
 </script>
 </body>
 </html>
