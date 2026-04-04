@@ -36,82 +36,94 @@
 
     body {
       font-family: 'Nunito', sans-serif;
-      background: #f0f0f0; /* Cor de fundo fora do "celular" */
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Restrição para Desktop - Simula um Celular */
-    .app-container {
-      width: 100%;
-      max-width: 500px; /* Largura máxima de um smartphone grande */
       background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      box-shadow: 0 0 40px rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
-      position: relative;
+      overflow: hidden;
+    }
+
+    /* BLOQUEIO PARA DESKTOP */
+    #desktop-blocker {
+      display: none; /* Escondido por padrão */
+      position: fixed;
+      inset: 0;
+      background: #1A1A2E;
+      color: white;
+      z-index: 9999;
+      padding: 40px;
+      text-align: center;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Fredoka One', cursive;
+    }
+
+    @media (min-width: 1025px) {
+      #desktop-blocker { display: flex; }
+      .app-container { display: none; }
+    }
+
+    /* LAYOUT MOBILE */
+    .app-container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .app-header {
       background: var(--card);
       border-bottom: 2px solid var(--border);
-      padding: 12px 16px;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 100;
     }
 
-    .brand-title { font-family: 'Fredoka One', cursive; font-size: 20px; color: var(--robot-color); }
-    .header-step { font-family: 'Fredoka One', cursive; font-size: 14px; color: var(--muted); }
+    .brand-title { font-family: 'Fredoka One', cursive; font-size: 18px; color: var(--robot-color); }
+    .header-step { font-family: 'Fredoka One', cursive; font-size: 13px; color: var(--muted); }
 
     .app-main {
-      padding: 12px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      justify-content: space-between; /* Distribui grade e botões */
       flex: 1;
     }
 
-    /* Grid responsiva que cabe na tela */
     .grid-container {
       width: 100%;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 4px;
+      gap: 3px;
       background: var(--card);
-      padding: 8px;
+      padding: 6px;
       border-radius: var(--radius);
       border: 2px solid var(--border);
       width: 100%;
       aspect-ratio: 1 / 1;
+      max-width: 420px;
+      margin: 0 auto;
     }
 
     .cell {
       background: #fff;
-      border: 1.5px solid #eee;
-      border-radius: 8px;
+      border: 1px solid #eee;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Fredoka One', cursive;
-      font-size: 14px;
-      cursor: pointer;
+      font-size: 13px;
       user-select: none;
-      transition: 0.1s;
     }
 
     .cell.target-cell { background: #FFF9D6; border-color: var(--target-color); color: #7a5c00; }
@@ -120,27 +132,29 @@
 
     @keyframes bounce { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-    /* Controles otimizados para polegar */
+    /* CONTROLES */
     .controls-area {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
+      padding-bottom: env(safe-area-inset-bottom, 10px);
     }
 
     .cmd-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 6px;
+      max-width: 320px;
+      margin: 0 auto;
     }
 
     .cmd-btn {
       border: none;
-      border-radius: 14px;
-      padding: 14px 5px;
+      border-radius: 12px;
+      padding: 15px 0;
       font-family: 'Fredoka One', cursive;
       color: #fff;
-      font-size: 14px;
-      cursor: pointer;
+      font-size: 13px;
       box-shadow: 0 4px 0 rgba(0,0,0,0.2);
     }
 
@@ -154,64 +168,70 @@
     .queue-box {
       background: #fff;
       border: 2px dashed var(--border);
-      border-radius: var(--radius);
-      min-height: 50px;
-      padding: 8px;
+      border-radius: 12px;
+      min-height: 44px;
+      padding: 6px;
       display: flex;
       flex-wrap: wrap;
       gap: 4px;
     }
 
     .q-chip {
-      width: 30px; height: 30px;
-      border-radius: 6px;
+      width: 26px; height: 26px;
+      border-radius: 5px;
       color: #fff;
       display: flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 12px;
+      font-weight: bold; font-size: 11px;
     }
 
     .status-bar {
-      padding: 10px;
-      border-radius: 12px;
+      padding: 8px;
+      border-radius: 10px;
       text-align: center;
       font-family: 'Fredoka One', cursive;
-      font-size: 14px;
+      font-size: 13px;
       background: #eee;
     }
 
     .btn-main {
       width: 100%;
-      padding: 16px;
+      padding: 14px;
       border-radius: var(--radius);
       border: none;
       font-family: 'Fredoka One', cursive;
-      font-size: 18px;
+      font-size: 16px;
       color: white;
       background: var(--success-color);
-      box-shadow: 0 6px 0 #1A7A42;
-      margin-top: 5px;
+      box-shadow: 0 4px 0 #1A7A42;
     }
 
     .secondary-btns {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
-      margin-top: 5px;
     }
 
     .btn-sec {
-      padding: 10px;
-      border-radius: 12px;
+      padding: 8px;
+      border-radius: 10px;
       border: 1px solid var(--border);
       background: white;
       font-family: 'Nunito', sans-serif;
       font-weight: 700;
+      font-size: 12px;
     }
 
     .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 200; }
   </style>
 </head>
 <body>
+
+<!-- TELA DE BLOQUEIO PARA PC -->
+<div id="desktop-blocker">
+  <span style="font-size: 50px; margin-bottom: 20px;">📱</span>
+  <h1>Acesso Somente via Celular ou Tablet</h1>
+  <p style="font-weight: normal; margin-top: 10px; opacity: 0.8;">Por favor, abra este link em seu dispositivo móvel para brincar com o Mostrabot.</p>
+</div>
 
 <div class="app-container">
   <header class="app-header">
@@ -222,17 +242,17 @@
   <main class="app-main">
     <section class="grid-container">
       <div style="display:flex; justify-content: space-between; width: 100%; align-items: center;">
-        <span style="font-weight: 800;">🎯 Destino: <span id="target-letter" style="color:var(--up-color)">?</span></span>
-        <button class="btn-sec" onclick="setRandomTarget()">🎲 Sortear</button>
+        <span style="font-weight: 800; font-size: 14px;">🎯 Destino: <span id="target-letter" style="color:var(--up-color)">?</span></span>
+        <button class="btn-sec" onclick="setRandomTarget()">🎲 Sortear Alvo</button>
       </div>
       
       <div class="grid" id="grid"></div>
     </section>
 
-    <div class="status-bar" id="status-bar">Programe o caminho!</div>
+    <div class="status-bar" id="status-bar">Monte sua sequência!</div>
 
     <section class="controls-area">
-      <div class="queue-box" id="queue"><small style="color:#aaa">Sequência vazia...</small></div>
+      <div class="queue-box" id="queue"></div>
       
       <div class="cmd-grid">
         <button class="cmd-btn up" onclick="addCmd('up')">FRENTE</button>
@@ -241,7 +261,7 @@
         <button class="cmd-btn right" onclick="addCmd('right')">DIR</button>
       </div>
 
-      <button class="btn-main" id="btn-exec" onclick="executeCommands()">INICIAR MOVIMENTO</button>
+      <button class="btn-main" id="btn-exec" onclick="executeCommands()">EXECUTAR</button>
       
       <div class="secondary-btns">
         <button class="btn-sec" onclick="undoCmd()">↩ Desfazer</button>
@@ -254,7 +274,6 @@
 <div class="confetti-wrap" id="confetti-wrap"></div>
 
 <script>
-// --- AUDIO ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playTone(freq, type, dur) {
   const osc = audioCtx.createOscillator();
@@ -271,7 +290,6 @@ const sounds = {
   error: () => playTone(150, 'sawtooth', 0.4)
 };
 
-// --- LÓGICA ---
 const COLS = 6;
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
 const DIRS = {
@@ -320,7 +338,7 @@ function addCmd(dir) {
   render();
 }
 
-function undoCmd() { commands.pop(); render(); }
+function undoCmd() { if(!executing) { commands.pop(); render(); } }
 
 function render() {
   document.querySelectorAll('.cell').forEach((el, idx) => {
@@ -336,7 +354,7 @@ function render() {
   });
 
   const qArea = document.getElementById('queue');
-  qArea.innerHTML = commands.length ? '' : '<small style="color:#aaa">Sequência vazia...</small>';
+  qArea.innerHTML = commands.length ? '' : '<small style="color:#aaa; width:100%; text-align:center">Vazio</small>';
   commands.forEach(cmd => {
     const chip = document.createElement('div');
     chip.className = 'q-chip';
@@ -376,7 +394,7 @@ async function executeCommands() {
     setStatus('🎉 PARABÉNS!', '#e8fbf0');
   } else {
     sounds.error();
-    setStatus('❌ Não chegou lá!', '#ffe8e8');
+    setStatus('❌ Alvo não atingido!', '#ffe8e8');
   }
   
   executing = false;
@@ -394,7 +412,7 @@ function resetAll() {
   robot = {row:0, col:0}; target = null; commands = [];
   document.getElementById('target-letter').textContent = '?';
   document.getElementById('step-num').textContent = '—';
-  setStatus('Programe o caminho!', '#eee');
+  setStatus('Monte sua sequência!', '#eee');
   render();
 }
 
