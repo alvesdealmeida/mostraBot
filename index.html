@@ -593,9 +593,55 @@
       .target-hint { display: none; }
       .cmd-label  { font-size: 11px; }
     }
+
+    /* Esconde o aviso por padrão */
+#desktop-warning {
+  display: none;
+}
+
+/* Ativa o aviso apenas em telas de Computador (Desktop) */
+@media (min-width: 1025px) {
+  #desktop-warning {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #FFF8F0;
+    z-index: 9999; /* Fica na frente de tudo */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: 'Fredoka One', cursive;
+  }
+
+  .warning-content {
+    padding: 20px;
+    color: #1A5FAD;
+  }
+
+  .warning-content span {
+    font-size: 80px;
+  }
+
+  /* Esconde o conteúdo principal do app no PC */
+  .app-header, .app-main {
+    display: none !important;
+  }
+}
   </style>
 </head>
 <body>
+
+  <div id="desktop-warning">
+  <div class="warning-content">
+    <span>🤖</span>
+    <h2>Acesso Restrito</h2>
+    <p>O Mostrabot foi projetado exclusivamente para Celulares e Tablets.</p>
+    <p>Por favor, abra este link no seu dispositivo móvel.</p>
+  </div>
+</div>
 
 <header class="app-header">
   <div class="header-brand">
