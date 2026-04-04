@@ -594,41 +594,44 @@
       .cmd-label  { font-size: 11px; }
     }  
 }
-  /* Esconde o aviso por padrão */
-#desktop-warning {
-  display: none;
+ /* CAMADA 1: Esconde o aviso de forma agressiva em qualquer dispositivo móvel */
+#aviso-desktop-somente {
+    display: none !important;
 }
 
-/* Ativa o aviso apenas em telas de Computador (Desktop) */
-@media (min-width: 1200px) and (pointer: fine) {
-  #desktop-warning {
-    display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #FFF8F0;
-    z-index: 9999; /* Fica na frente de tudo */
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    font-family: 'Fredoka One', cursive;
-  }
+/* CAMADA 2: Só mostra se for uma tela larga (Desktop) */
+@media screen and (min-width: 1025px) {
+    
+    /* CAMADA 3: Só mostra se o dispositivo usar MOUSE (ponteiro fino) */
+    /* Isso ignora iPads e Celulares grandes que usam o toque */
+    @media (pointer: fine) {
+        #aviso-desktop-somente {
+            display: flex !important;
+            position: fixed;
+            inset: 0;
+            background: #FFF8F0;
+            z-index: 999999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
-  .warning-content {
-    padding: 20px;
-    color: #1A5FAD;
-  }
+        /* Esconde o jogo apenas quando o aviso acima estiver ativo */
+        .app-header, .app-main {
+            display: none !important;
+        }
+    }
+}
 
-  .warning-content span {
-    font-size: 80px;
-  }
-
-  /* Esconde o conteúdo principal do app no PC */
-  .app-header, .app-main {
-    display: none !important;
-  }
+/* GARANTIA: Se for um dispositivo de toque (Celular/Tablet), 
+   forçamos o jogo a aparecer, não importa o tamanho da tela */
+@media (pointer: coarse) {
+    #aviso-desktop-somente {
+        display: none !important;
+    }
+    .app-header, .app-main {
+        display: flex !important;
+    }
 }
   </style>
 </head>
