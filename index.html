@@ -29,15 +29,15 @@
       --robot-color:  #3A8FE8;
       --success-color:#27AE60;
       --error-color:  #E84040;
-      --bg:            #FFF8F0;
-      --card:          #FFFFFF;
-      --border:        #E8E0D8;
-      --text:          #1A1A2E;
-      --muted:         #7A7A8A;
-      --grid-cell:     #FFFFFF;
-      --grid-border:   #D8D0C8;
-      --radius:        14px;
-      --shadow:        0 3px 14px rgba(0,0,0,0.09);
+      --bg:           #FFF8F0;
+      --card:         #FFFFFF;
+      --border:       #E8E0D8;
+      --text:         #1A1A2E;
+      --muted:        #7A7A8A;
+      --grid-cell:    #FFFFFF;
+      --grid-border:  #D8D0C8;
+      --radius:       14px;
+      --shadow:       0 3px 14px rgba(0,0,0,0.09);
     }
 
     html, body { height: 100%; }
@@ -101,7 +101,6 @@
 
     .header-step b { color: var(--robot-color); }
 
-    /* ── MAIN LAYOUT ── */
     .app-main {
       display: flex;
       flex-direction: column;
@@ -120,7 +119,6 @@
       }
     }
 
-    /* ── GRID SECTION ── */
     .grid-section {
       flex: 0 0 auto;
       display: flex;
@@ -134,7 +132,31 @@
       .grid-section { width: clamp(280px, 48%, 460px); }
     }
 
-    /* ── GRID ── */
+    .grid-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .info-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: clamp(11px, 2.5vw, 13px);
+      font-weight: 700;
+    }
+
+    .chip-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .chip-robot  { background: var(--robot-color); }
+    .chip-target { background: var(--target-color); border: 2px solid #c89a00; }
+
     .grid-wrap { position: relative; width: 100%; display: flex; justify-content: center; }
 
     .grid {
@@ -163,41 +185,62 @@
       font-size: clamp(13px, 3.5vw, 24px);
       color: var(--text);
       cursor: pointer;
-      transition: transform 0.15s, background 0.2s;
+      transition: transform 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+      position: relative;
       user-select: none;
       touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .cell:hover:not(.robot-cell):not(.target-cell) {
+      background: #F0F6FF;
+      border-color: var(--robot-color);
+      transform: scale(1.06);
     }
 
     .cell.target-cell {
       background: #FFF9D6;
       border-color: var(--target-color);
       border-width: 3px;
+      box-shadow: 0 0 0 3px var(--target-glow);
       animation: pulse-target 1.8s ease-in-out infinite;
+      color: #7a5c00;
     }
 
     @keyframes pulse-target {
       0%, 100% { box-shadow: 0 0 0 3px rgba(245,200,66,0.4); }
-      50% { box-shadow: 0 0 0 7px rgba(245,200,66,0.1); }
+      50%       { box-shadow: 0 0 0 7px rgba(245,200,66,0.1); }
     }
 
     .cell.robot-cell {
       background: #EEF6FF;
       border-color: var(--robot-color);
       border-width: 3px;
+      box-shadow: 0 0 0 3px rgba(58,143,232,0.25);
+      font-size: clamp(18px, 5vw, 32px);
     }
 
     .cell.robot-on-target {
       background: #FFFDE6;
       border-color: var(--target-color);
+      border-width: 3px;
+      box-shadow: 0 0 0 5px rgba(245,200,66,0.35);
       animation: pulse-win 0.6s ease-in-out infinite alternate;
+      font-size: clamp(18px, 5vw, 32px);
     }
 
     @keyframes pulse-win {
       from { transform: scale(1); }
-      to { transform: scale(1.08); }
+      to   { transform: scale(1.08); }
     }
 
-    /* ── TARGET BADGE ── */
+    .cell.active-step {
+      outline: 3px solid #FF6B35;
+      outline-offset: 1px;
+    }
+
+    .cell-letter { pointer-events: none; }
+
     .target-display {
       display: flex;
       align-items: center;
@@ -206,12 +249,16 @@
       border: 2px solid var(--target-color);
       border-radius: 14px;
       padding: 8px 16px;
+      font-family: 'Fredoka One', cursive;
       width: 100%;
       justify-content: center;
+      box-shadow: 0 2px 8px rgba(245,200,66,0.2);
       flex-wrap: wrap;
     }
 
-    .target-val { font-family: 'Fredoka One', cursive; font-size: 28px; color: #7a5c00; }
+    .target-label { font-size: 13px; color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 700; }
+    .target-val   { font-size: 28px; color: #7a5c00; }
+    .target-hint  { font-size: 12px; color: var(--muted); font-family: 'Nunito', sans-serif; }
 
     .btn-random {
       background: var(--target-color);
@@ -219,12 +266,25 @@
       border-radius: 10px;
       padding: 6px 14px;
       font-family: 'Fredoka One', cursive;
+      font-size: 13px;
+      color: #5a3c00;
       cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
       box-shadow: 0 3px 0 #c89a00;
+      touch-action: manipulation;
     }
 
-    /* ── CONTROLS ── */
-    .controls-section { flex: 1; display: flex; flex-direction: column; gap: 12px; width: 100%; }
+    .btn-random:hover  { background: #f0bb20; }
+    .btn-random:active { transform: translateY(2px); box-shadow: 0 1px 0 #c89a00; }
+
+    .controls-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      min-width: 0;
+    }
 
     .panel {
       background: var(--card);
@@ -234,59 +294,293 @@
       box-shadow: var(--shadow);
     }
 
-    .cmd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .panel-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 15px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto;
+      gap: 8px;
+    }
 
     .cmd-btn {
       border: none;
       border-radius: 14px;
-      padding: 12px;
+      padding: clamp(10px, 3vw, 16px) 8px;
       font-family: 'Fredoka One', cursive;
+      font-size: clamp(14px, 3.5vw, 18px);
       cursor: pointer;
-      color: #fff;
-      box-shadow: 0 5px 0 rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.1s, box-shadow 0.1s, filter 0.15s;
+      touch-action: manipulation;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
     }
 
-    .cmd-btn.up    { background: var(--up-color); grid-column: 1 / -1; }
-    .cmd-btn.down  { background: var(--down-color); grid-column: 1 / -1; }
-    .cmd-btn.left  { background: var(--left-color); }
-    .cmd-btn.right { background: var(--right-color); }
+    .cmd-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background 0.15s;
+    }
+
+    .cmd-btn:active::after { background: rgba(255,255,255,0.25); }
+    .cmd-btn:active { transform: translateY(3px); }
+
+    .cmd-btn.up    { background: var(--up-color);    color: #fff; box-shadow: 0 5px 0 var(--up-dark);    grid-column: 1 / -1; }
+    .cmd-btn.down  { background: var(--down-color);  color: #fff; box-shadow: 0 5px 0 var(--down-dark);  grid-column: 1 / -1; }
+    .cmd-btn.left  { background: var(--left-color);  color: #fff; box-shadow: 0 5px 0 var(--left-dark);  }
+    .cmd-btn.right { background: var(--right-color); color: #fff; box-shadow: 0 5px 0 var(--right-dark); }
+
+    .cmd-btn:disabled { filter: opacity(0.45) grayscale(0.4); cursor: not-allowed; }
+    .cmd-btn:disabled:active { transform: none; }
+
+    .cmd-arrow { font-size: clamp(18px, 5vw, 26px); }
+    .cmd-label { font-size: clamp(12px, 3vw, 16px); }
 
     .queue-area {
       min-height: 64px;
       display: flex;
       flex-wrap: wrap;
       gap: 5px;
+      align-content: flex-start;
+      max-height: 130px;
+      overflow-y: auto;
       background: #F7F4F0;
       border-radius: 10px;
       padding: 8px;
       border: 1.5px dashed var(--border);
     }
 
-    .q-chip {
-      width: 34px; height: 34px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 900;
+    .queue-empty {
+      width: 100%;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px;
     }
+
+    .q-chip {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 900;
+      color: #fff;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+
+    .q-chip.up    { background: var(--up-color); }
+    .q-chip.down  { background: var(--down-color); }
+    .q-chip.left  { background: var(--left-color); }
+    .q-chip.right { background: var(--right-color); }
+
+    .q-chip.current-step {
+      outline: 3px solid #FF6B35;
+      outline-offset: 1px;
+      transform: scale(1.2);
+    }
+
+    .q-chip.done { filter: brightness(0.6); }
+
+    .queue-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn-undo, .btn-clear {
+      flex: 1;
+      border: none;
+      border-radius: 10px;
+      padding: 8px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 13px;
+      cursor: pointer;
+      transition: transform 0.1s, filter 0.15s;
+      touch-action: manipulation;
+    }
+
+    .btn-undo  { background: #F0E6FF; color: var(--left-dark);  box-shadow: 0 3px 0 #C8A0E0; }
+    .btn-clear { background: #FFE8E8; color: #A02020;            box-shadow: 0 3px 0 #E0A0A0; }
+    .btn-undo:active, .btn-clear:active  { transform: translateY(2px); box-shadow: 0 1px 0; }
+    .btn-undo:disabled, .btn-clear:disabled { filter: opacity(0.4); cursor: not-allowed; }
 
     .btn-exec {
-      width: 100%; padding: 16px; border: none; border-radius: 14px;
-      background: var(--success-color); color: #fff;
-      font-family: 'Fredoka One', cursive; font-size: 20px;
-      box-shadow: 0 6px 0 #1A7A42; cursor: pointer;
+      width: 100%;
+      padding: clamp(12px, 3vw, 16px);
+      border: none;
+      border-radius: 14px;
+      background: var(--success-color);
+      color: #fff;
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(17px, 4vw, 21px);
+      cursor: pointer;
+      box-shadow: 0 6px 0 #1A7A42;
+      transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
+
+    .btn-exec:hover  { background: #22A055; }
+    .btn-exec:active { transform: translateY(4px); box-shadow: 0 2px 0 #1A7A42; }
+    .btn-exec:disabled { background: #90C8A0; cursor: not-allowed; box-shadow: 0 4px 0 #5A9A70; }
+    .btn-exec:disabled:active { transform: none; box-shadow: 0 4px 0 #5A9A70; }
+
+    .btn-reset {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      color: var(--muted);
+      font-family: 'Fredoka One', cursive;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      touch-action: manipulation;
+    }
+
+    .btn-reset:hover { background: #F0F0F0; color: var(--text); }
 
     .status-bar {
-      border-radius: 12px; padding: 10px;
-      font-family: 'Fredoka One', cursive; text-align: center;
-      background: #F4F4F4; border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(13px, 3vw, 16px);
+      text-align: center;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      background: #F4F4F4;
+      color: var(--muted);
+      border: 2px solid var(--border);
     }
 
-    .hidden { display: none; }
-    
-    /* Confetes */
-    .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 100; }
-    .confetti-piece { position: absolute; width: 10px; height: 14px; animation: fall linear forwards; }
-    @keyframes fall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+    .status-bar.success { background: #E8FBF0; color: var(--success-color); border-color: var(--success-color); }
+    .status-bar.error   { background: #FFE8E8; color: var(--error-color);   border-color: var(--error-color); }
+    .status-bar.running { background: #EEF6FF; color: var(--robot-color);   border-color: var(--robot-color); }
+    .status-bar.warn    { background: #FFF9D6; color: #7a5c00;               border-color: var(--target-color); }
+
+    .speed-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .speed-row input[type=range] {
+      flex: 1;
+      accent-color: var(--robot-color);
+    }
+
+    .confetti-wrap {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      top: -10px;
+      width: 10px;
+      height: 14px;
+      border-radius: 3px;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      background: var(--card);
+      border-radius: 8px;
+      padding: 3px 8px;
+      border: 1.5px solid var(--border);
+    }
+
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+    .about-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 0;
+      background: none;
+      border: none;
+      font-family: 'Nunito', sans-serif;
+      touch-action: manipulation;
+    }
+
+    .about-toggle:hover { color: var(--robot-color); }
+
+    .about-content {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    .about-content b { color: var(--text); }
+    .about-content.hidden { display: none; }
+
+    @media (min-width: 700px) {
+      .app-main { flex-direction: row; align-items: flex-start; padding: 16px; gap: 16px; }
+      .grid-section { width: clamp(280px, 48%, 460px); }
+      .cell {
+        width:  clamp(42px, calc((min(48vw, 460px) - 36px) / 6), 72px);
+        height: clamp(42px, calc((min(48vw, 460px) - 36px) / 6), 72px);
+      }
+    }
+
+    @media (max-width: 360px) {
+      .app-main   { padding: 8px; gap: 8px; }
+      .panel      { padding: 9px; }
+      .target-hint { display: none; }
+      .cmd-label  { font-size: 11px; }
+    }
   </style>
 </head>
 <body>
@@ -299,7 +593,9 @@
       <div class="brand-sub">Kit EJR · Primeiros Passos</div>
     </div>
   </div>
-  <div class="header-step" id="step-display">Passo <b id="step-num">—</b></div>
+  <div class="header-step" id="step-display">
+    Passo <b id="step-num">—</b>
+  </div>
 </header>
 
 <div class="confetti-wrap" id="confetti-wrap"></div>
@@ -309,47 +605,103 @@
     <div class="target-display">
       <span class="target-label">🎯 Destino:</span>
       <span class="target-val" id="target-letter">?</span>
-      <button class="btn-random" id="btn-random" onclick="setRandomTarget()">🎲 Sortear</button>
+      <span class="target-hint">clique na grade para escolher</span>
+      <button class="btn-random" id="btn-random" onclick="setRandomTarget()" title="Sortear destino">🎲 Sortear</button>
     </div>
+
     <div class="grid-wrap">
       <div class="grid" id="grid"></div>
+    </div>
+
+    <div class="legend-row">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--robot-color);"></div> Mostrabot</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--target-color); border:1px solid #c89a00;"></div> Destino</div>
+      <div class="legend-item"><span style="font-size:11px;">👆</span> Toque p/ mover destino</div>
     </div>
   </section>
 
   <section class="controls-section">
-    <div class="status-bar" id="status-bar">Escolha o destino e programe o Mostrabot! 🚀</div>
+    <div class="status-bar" id="status-bar">
+      Escolha o destino e programe o Mostrabot! 🚀
+    </div>
 
     <div class="panel">
+      <div class="panel-title">🧩 Blocos de Comando</div>
       <div class="cmd-grid">
-        <button class="cmd-btn up" onclick="addCmd('up')">⬆️ Para Frente</button>
-        <button class="cmd-btn left" onclick="addCmd('left')">⬅️ Esquerda</button>
-        <button class="cmd-btn right" onclick="addCmd('right')">➡️ Direita</button>
-        <button class="cmd-btn down" onclick="addCmd('down')">⬇️ Para Trás</button>
+        <button class="cmd-btn up"    onclick="addCmd('up')"    id="btn-up">
+          <span class="cmd-arrow">⬆️</span><span class="cmd-label">Para Frente</span>
+        </button>
+        <button class="cmd-btn left"  onclick="addCmd('left')"  id="btn-left">
+          <span class="cmd-arrow">⬅️</span><span class="cmd-label">Esquerda</span>
+        </button>
+        <button class="cmd-btn right" onclick="addCmd('right')" id="btn-right">
+          <span class="cmd-arrow">➡️</span><span class="cmd-label">Direita</span>
+        </button>
+        <button class="cmd-btn down"  onclick="addCmd('down')"  id="btn-down">
+          <span class="cmd-arrow">⬇️</span><span class="cmd-label">Para Trás</span>
+        </button>
       </div>
     </div>
 
     <div class="panel">
+      <div class="panel-title">📋 Sequência de Comandos <span id="cmd-count" style="font-size:13px;color:var(--muted);">(0)</span></div>
       <div class="queue-area" id="queue">
-        <div id="queue-empty">Adicione blocos aqui!</div>
+        <div class="queue-empty" id="queue-empty">Adicione blocos de comando aqui!</div>
       </div>
-      <div style="display:flex; gap:8px; margin-top:8px;">
-        <button onclick="undoCmd()" style="flex:1; padding:8px; border-radius:8px; border:none; background:#eee;">↩ Desfazer</button>
-        <button onclick="clearCmds()" style="flex:1; padding:8px; border-radius:8px; border:none; background:#ffe8e8; color:red;">🗑 Limpar</button>
+      <div class="queue-actions">
+        <button class="btn-undo"  onclick="undoCmd()"   id="btn-undo">↩ Desfazer</button>
+        <button class="btn-clear" onclick="clearCmds()" id="btn-clear">🗑 Apagar Tudo</button>
       </div>
     </div>
 
-    <button class="btn-exec" id="btn-exec" onclick="executeCommands()">▶ Executar Programa</button>
-    <button onclick="resetAll()" style="width:100%; padding:10px; background:none; border:none; color:#777; font-weight:bold; cursor:pointer;">🔄 Reiniciar Robô</button>
+    <div class="panel">
+      <div class="panel-title">⚡ Velocidade de Execução</div>
+      <div class="speed-row">
+        <span>🐢</span>
+        <input type="range" id="speed-slider" min="1" max="5" value="3" step="1" />
+        <span>🐇</span>
+        <span id="speed-label" style="min-width:60px;font-size:12px;">Normal</span>
+      </div>
+    </div>
+
+    <button class="btn-exec" id="btn-exec" onclick="executeCommands()">
+      ▶ Executar Programa
+    </button>
+
+    <button class="btn-reset" id="btn-reset" onclick="resetAll()">
+      🔄 Reiniciar Tudo
+    </button>
+
+    <div class="panel">
+      <button class="about-toggle" onclick="toggleAbout()">
+        ℹ️ Sobre a atividade <span id="about-arrow">▼</span>
+      </button>
+      <div class="about-content hidden" id="about-content">
+        Inspirado nos princípios de <b>Seymour Papert</b> e na lógica da linguagem <b>LOGO</b>,
+        o Mostrabot ensina pensamento computacional por meio da experimentação.
+        As crianças montam sequências de blocos (Para Frente, Para Trás, Esquerda, Direita)
+        para conduzir o robô até a letra ou número escolhido.
+        O erro é parte do aprendizado — ajuste a sequência e tente novamente! 🌟
+      </div>
+    </div>
   </section>
 </main>
 
-<!-- Áudios (Opcional: Substitua os URLs por arquivos reais se desejar) -->
-<audio id="sound-success" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
-<audio id="sound-error" src="https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3"></audio>
-
 <script>
+// --- CONFIGURAÇÃO DE SONS ---
+const audioStep = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
+const audioSuccess = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+const audioError = new Audio('https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3');
+
+function playSound(type) {
+    if (type === 'step') { audioStep.currentTime = 0; audioStep.play(); }
+    if (type === 'success') { audioSuccess.currentTime = 0; audioSuccess.play(); }
+    if (type === 'error') { audioError.currentTime = 0; audioError.play(); }
+}
+
 const COLS = 6, ROWS = 6;
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
+
 const DIRS = {
   up:    { dr: -1, dc:  0, arrow: '⬆', label: 'Para Frente' },
   down:  { dr:  1, dc:  0, arrow: '⬇', label: 'Para Trás'   },
@@ -357,14 +709,21 @@ const DIRS = {
   right: { dr:  0, dc:  1, arrow: '➡', label: 'Direita'     },
 };
 
-let robot = { row: 0, col: 0 };
-let target = null;
+const SPEED_MAP    = { 1: 900, 2: 600, 3: 380, 4: 220, 5: 100 };
+const SPEED_LABELS = { 1: 'Muito Lento', 2: 'Lento', 3: 'Normal', 4: 'Rápido', 5: 'Turbo 🚀' };
+
+let robot    = { row: 0, col: 0 };
+let target   = null;
 let commands = [];
 let executing = false;
+let execAbort = false;
 
 function init() {
   buildGrid();
   renderAll();
+  updateButtons();
+  document.getElementById('speed-slider').addEventListener('input', updateSpeedLabel);
+  updateSpeedLabel();
 }
 
 function buildGrid() {
@@ -375,6 +734,8 @@ function buildGrid() {
     const col = idx % COLS;
     const cell = document.createElement('div');
     cell.className = 'cell';
+    cell.dataset.row = row;
+    cell.dataset.col = col;
     cell.id = `cell-${row}-${col}`;
     cell.addEventListener('click', () => onCellClick(row, col));
     grid.appendChild(cell);
@@ -382,30 +743,54 @@ function buildGrid() {
 }
 
 function renderAll() {
+  renderGrid();
+  renderQueue();
+}
+
+function renderGrid() {
   CHARS.forEach((ch, idx) => {
     const row = Math.floor(idx / COLS);
     const col = idx % COLS;
     const cell = document.getElementById(`cell-${row}-${col}`);
-    const isRobot = robot.row === row && robot.col === col;
-    const isTgt = target && target.row === row && target.col === col;
-
+    const isRobot  = robot.row === row && robot.col === col;
+    const isTgt    = target && target.row === row && target.col === col;
+    const bothOnIt = isRobot && isTgt;
     cell.className = 'cell';
-    if (isRobot && isTgt) cell.classList.add('robot-on-target');
+    if (bothOnIt) cell.classList.add('robot-on-target');
     else if (isRobot) cell.classList.add('robot-cell');
     else if (isTgt) cell.classList.add('target-cell');
-
     cell.textContent = isRobot ? '🤖' : ch;
+  });
+}
+
+function renderQueue() {
+  const queueEl = document.getElementById('queue');
+  const emptyEl = document.getElementById('queue-empty');
+  const countEl = document.getElementById('cmd-count');
+  countEl.textContent = `(${commands.length})`;
+  emptyEl.style.display = commands.length === 0 ? 'block' : 'none';
+  queueEl.querySelectorAll('.q-chip').forEach(c => c.remove());
+  commands.forEach((cmd, i) => {
+    const chip = document.createElement('div');
+    chip.className = `q-chip ${cmd}`;
+    chip.id = `chip-${i}`;
+    chip.textContent = DIRS[cmd].arrow;
+    queueEl.appendChild(chip);
   });
 }
 
 function onCellClick(row, col) {
   if (executing) return;
+  if (robot.row === row && robot.col === col) return;
   target = { row, col };
   document.getElementById('target-letter').textContent = CHARS[row * COLS + col];
-  renderAll();
+  setStatus('neutral', `Destino definido: ${CHARS[row * COLS + col]}`);
+  renderGrid();
+  updateButtons();
 }
 
 function setRandomTarget() {
+  if (executing) return;
   let r, c;
   do {
     r = Math.floor(Math.random() * ROWS);
@@ -416,104 +801,140 @@ function setRandomTarget() {
 
 function addCmd(dir) {
   if (executing) return;
-  commands.push(dir);
-  updateQueueUI();
-}
-
-function updateQueueUI() {
-  const qArea = document.getElementById('queue');
-  const empty = document.getElementById('queue-empty');
-  qArea.querySelectorAll('.q-chip').forEach(n => n.remove());
-  
-  if (commands.length === 0) {
-    empty.style.display = 'block';
-  } else {
-    empty.style.display = 'none';
-    commands.forEach(cmd => {
-      const chip = document.createElement('div');
-      chip.className = `q-chip`;
-      chip.style.backgroundColor = `var(--${cmd}-color)`;
-      chip.textContent = DIRS[cmd].arrow;
-      qArea.appendChild(chip);
-    });
+  if (commands.length < 24) {
+    commands.push(dir);
+    renderQueue();
+    updateButtons();
   }
 }
 
-function undoCmd() { if (!executing) { commands.pop(); updateQueueUI(); } }
-function clearCmds() { if (!executing) { commands = []; updateQueueUI(); } }
+function undoCmd() {
+  if (!executing && commands.length > 0) {
+    commands.pop();
+    renderQueue();
+    updateButtons();
+  }
+}
 
-function playSound(id) {
-  const s = document.getElementById(id);
-  if (s) { s.currentTime = 0; s.play().catch(() => {}); }
+function clearCmds() {
+  if (!executing) {
+    commands = [];
+    renderQueue();
+    updateButtons();
+  }
 }
 
 async function executeCommands() {
-  if (executing || commands.length === 0 || !target) return;
+  if (executing || !target || commands.length === 0) return;
+
   executing = true;
-  const statusBar = document.getElementById('status-bar');
-  
-  let startPos = { ...robot };
+  setControlsDisabled(true);
+  setStatus('running', 'Executando...');
+
+  const delay = SPEED_MAP[document.getElementById('speed-slider').value];
+  let pos = { ...robot };
 
   for (let i = 0; i < commands.length; i++) {
-    const cmd = commands[i];
-    const nR = robot.row + DIRS[cmd].dr;
-    const nC = robot.col + DIRS[cmd].dc;
+    const dir = DIRS[commands[i]];
+    const newRow = pos.row + dir.dr;
+    const newCol = pos.col + dir.dc;
 
-    if (nR < 0 || nR >= ROWS || nC < 0 || nC >= COLS) {
-      playSound('sound-error');
-      statusBar.textContent = "💥 Bateu na parede! Tente outro caminho.";
-      statusBar.style.color = "red";
-      executing = false;
+    // Destaca passo
+    document.getElementById(`chip-${i}`).classList.add('current-step');
+    document.getElementById('step-num').textContent = i + 1;
+
+    await sleep(delay);
+
+    if (newRow < 0 || newRow >= ROWS || newCol < 0 || newCol >= COLS) {
+      playSound('error'); // SOM DE ERRO
+      setStatus('error', '💥 Bateu na parede!');
+      finishExec(false);
       return;
     }
 
-    robot.row = nR;
-    robot.col = nC;
-    document.getElementById('step-num').textContent = i + 1;
-    renderAll();
-    await new Promise(r => setTimeout(r, 600));
+    pos.row = newRow;
+    pos.col = newCol;
+    robot = { ...pos };
+    playSound('step'); // SOM DE PASSO
+    renderGrid();
   }
 
-  // --- FINAL DA EXECUÇÃO ---
+  await sleep(300);
   if (robot.row === target.row && robot.col === target.col) {
-    playSound('sound-success');
-    statusBar.textContent = '🎉 Você conseguiu! O Mostrabot chegou!';
-    statusBar.style.color = "green";
+    playSound('success'); // SOM DE ACERTO
+    setStatus('success', '🎉 Conseguiu!');
     launchConfetti();
   } else {
-    playSound('sound-error');
-    statusBar.textContent = '🤔 Quase lá! O robô parou no lugar errado.';
-    statusBar.style.color = "orange";
+    playSound('error'); // SOM DE ERRO (lugar errado)
+    setStatus('error', '🤔 Lugar errado.');
   }
+  finishExec(true);
+}
+
+function finishExec(success) {
   executing = false;
+  setControlsDisabled(false);
+  updateButtons();
+}
+
+function setStatus(type, msg) {
+  const bar = document.getElementById('status-bar');
+  bar.className = 'status-bar ' + type;
+  bar.textContent = msg;
+}
+
+function updateButtons() {
+  const isExec = executing;
+  document.getElementById('btn-exec').disabled = isExec || !target || commands.length === 0;
+  document.getElementById('btn-undo').disabled = isExec || commands.length === 0;
+  document.getElementById('btn-clear').disabled = isExec || commands.length === 0;
+}
+
+function setControlsDisabled(bool) {
+  ['up','down','left','right'].forEach(d => document.getElementById('btn-'+d).disabled = bool);
+  document.getElementById('btn-random').disabled = bool;
+}
+
+function updateSpeedLabel() {
+  const val = document.getElementById('speed-slider').value;
+  document.getElementById('speed-label').textContent = SPEED_LABELS[val];
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function resetAll() {
+  robot = { row:0, col:0 };
+  target = null;
+  commands = [];
+  document.getElementById('target-letter').textContent = '?';
+  document.getElementById('step-num').textContent = '—';
+  setStatus('neutral', 'Escolha o destino!');
+  renderAll();
+  updateButtons();
+}
+
+function toggleAbout() {
+  const c = document.getElementById('about-content');
+  const a = document.getElementById('about-arrow');
+  c.classList.toggle('hidden');
+  a.textContent = c.classList.contains('hidden') ? '▼' : '▲';
 }
 
 function launchConfetti() {
-  const container = document.getElementById('confetti-wrap');
-  for (let i = 0; i < 50; i++) {
+  const wrap = document.getElementById('confetti-wrap');
+  const colors = ['#3A8FE8', '#27AE60', '#F5C842', '#E8773A', '#9B59B6'];
+  for (let i=0; i<40; i++) {
     const p = document.createElement('div');
     p.className = 'confetti-piece';
     p.style.left = Math.random() * 100 + 'vw';
-    p.style.backgroundColor = ['#ff0','#f0f','#0ff','#0f0'][Math.floor(Math.random()*4)];
+    p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
     p.style.animationDuration = (Math.random() * 2 + 1) + 's';
-    container.appendChild(p);
+    wrap.appendChild(p);
     setTimeout(() => p.remove(), 3000);
   }
 }
 
-function resetAll() {
-  if (executing) return;
-  robot = { row: 0, col: 0 };
-  commands = [];
-  target = null;
-  document.getElementById('target-letter').textContent = '?';
-  document.getElementById('status-bar').textContent = "Robô reiniciado!";
-  document.getElementById('status-bar').style.color = "";
-  updateQueueUI();
-  renderAll();
-}
-
-init();
+window.onload = init;
 </script>
 </body>
 </html>
