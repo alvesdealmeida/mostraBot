@@ -3,421 +3,229 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Mostrabot — Primeiros Passos</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <title>Mostrabot — Mobile Only</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet" />
+  
   <style>
+    /* 1. RESET E CORES */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --up-color:    #3A8FE8;
-      --up-dark:     #1A5FAD;
-      --down-color:  #E8773A;
-      --down-dark:   #AD4E1A;
-      --left-color:  #9B59B6;
-      --left-dark:   #6B2D8A;
-      --right-color: #27AE60;
-      --right-dark:  #1A7A42;
-      --target-color: #F5C842;
-      --robot-color:  #3A8FE8;
-      --success-color:#27AE60;
-      --error-color:  #E84040;
-      --bg:           #FFF8F0;
-      --card:         #FFFFFF;
-      --border:       #E8E0D8;
-      --text:         #1A1A2E;
-      --muted:        #7A7A8A;
-      --radius:       18px;
-      --shadow:       0 4px 12px rgba(0,0,0,0.08);
+      --up-color: #3A8FE8; --down-color: #E8773A; --left-color: #9B59B6; --right-color: #27AE60;
+      --bg: #FFF8F0; --card: #FFFFFF; --text: #1A1A2E; --radius: 18px;
     }
 
-    body {
-      font-family: 'Nunito', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
+    body, html { 
+      height: 100%; 
+      background: var(--bg); 
+      font-family: 'Nunito', sans-serif; 
+      overflow: hidden; 
     }
 
-    /* BLOQUEIO PARA DESKTOP */
-    #desktop-blocker {
-      display: none; /* Escondido por padrão */
-      position: fixed;
-      inset: 0;
-      background: #1A1A2E;
-      color: white;
-      z-index: 9999;
-      padding: 40px;
-      text-align: center;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Fredoka One', cursive;
+    /* 2. TELA DE BLOQUEIO (APARECE NO PC) */
+    #pc-blocker {
+      position: fixed; inset: 0;
+      background: #1a1a2e; color: white;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      z-index: 9999; text-align: center; padding: 20px;
     }
+    #pc-blocker h1 { font-family: 'Fredoka One', cursive; margin-bottom: 15px; }
+    #pc-blocker p { opacity: 0.8; max-width: 400px; line-height: 1.5; }
 
-    @media (min-width: 1025px) {
-      #desktop-blocker { display: flex; }
-      .app-container { display: none; }
-    }
-
-    /* LAYOUT MOBILE */
-    .app-container {
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+    /* 3. APP CONTAINER (SÓ APARECE NO MOBILE) */
+    #app-content { display: none; height: 100%; flex-direction: column; }
 
     .app-header {
-      background: var(--card);
-      border-bottom: 2px solid var(--border);
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background: var(--card); padding: 12px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 2px solid #eee;
     }
-
-    .brand-title { font-family: 'Fredoka One', cursive; font-size: 18px; color: var(--robot-color); }
-    .header-step { font-family: 'Fredoka One', cursive; font-size: 13px; color: var(--muted); }
+    .brand { font-family: 'Fredoka One', cursive; color: var(--up-color); font-size: 20px; }
 
     .app-main {
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between; /* Distribui grade e botões */
-      flex: 1;
+      flex: 1; padding: 15px;
+      display: flex; flex-direction: column;
+      justify-content: space-around;
     }
 
-    .grid-container {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
+    /* GRADE AJUSTADA PARA MOBILE/TABLET */
     .grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 3px;
-      background: var(--card);
-      padding: 6px;
-      border-radius: var(--radius);
-      border: 2px solid var(--border);
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      max-width: 420px;
-      margin: 0 auto;
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      gap: 4px; background: white; padding: 8px;
+      border-radius: var(--radius); border: 2px solid #ddd;
+      width: 100%; max-width: 450px; aspect-ratio: 1/1; margin: 0 auto;
     }
-
     .cell {
-      background: #fff;
-      border: 1px solid #eee;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Fredoka One', cursive;
-      font-size: 13px;
-      user-select: none;
+      background: #f9f9f9; border: 1px solid #eee; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Fredoka One', cursive; font-size: 14px;
     }
-
-    .cell.target-cell { background: #FFF9D6; border-color: var(--target-color); color: #7a5c00; }
-    .cell.robot-cell { background: #EEF6FF; border-color: var(--robot-color); font-size: 22px; }
-    .cell.robot-on-target { background: #E8FBF0; border-color: var(--success-color); font-size: 22px; animation: bounce 0.5s infinite alternate; }
-
-    @keyframes bounce { from { transform: scale(1); } to { transform: scale(1.1); } }
+    .cell.robot { background: #EEF6FF; border: 2px solid var(--up-color); font-size: 24px; }
+    .cell.target { background: #FFF9D6; border: 2px solid #F5C842; }
 
     /* CONTROLES */
-    .controls-area {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding-bottom: env(safe-area-inset-bottom, 10px);
+    .controls { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 450px; margin: 0 auto; }
+    .cmd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .btn {
+      border: none; border-radius: 15px; padding: 15px;
+      color: white; font-family: 'Fredoka One', cursive;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.2); font-size: 14px;
     }
-
-    .cmd-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      max-width: 320px;
-      margin: 0 auto;
-    }
-
-    .cmd-btn {
-      border: none;
-      border-radius: 12px;
-      padding: 15px 0;
-      font-family: 'Fredoka One', cursive;
-      color: #fff;
-      font-size: 13px;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.2);
-    }
-
-    .cmd-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
-    
+    .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
     .up { background: var(--up-color); grid-column: 2; }
-    .left { background: var(--left-color); grid-column: 1; grid-row: 2; }
-    .right { background: var(--right-color); grid-column: 3; grid-row: 2; }
-    .down { background: var(--down-color); grid-column: 2; grid-row: 2; }
+    .left { background: var(--left-color); grid-column: 1; }
+    .down { background: var(--down-color); grid-column: 2; }
+    .right { background: var(--right-color); grid-column: 3; }
 
-    .queue-box {
-      background: #fff;
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      min-height: 44px;
-      padding: 6px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
+    .exec-btn { 
+      background: #27AE60; padding: 18px; font-size: 18px; 
+      box-shadow: 0 6px 0 #1A7A42; margin-top: 5px;
     }
 
-    .q-chip {
-      width: 26px; height: 26px;
-      border-radius: 5px;
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 11px;
+    .status { 
+      background: #eee; padding: 10px; border-radius: 10px; 
+      text-align: center; font-weight: 900; font-size: 14px;
     }
-
-    .status-bar {
-      padding: 8px;
-      border-radius: 10px;
-      text-align: center;
-      font-family: 'Fredoka One', cursive;
-      font-size: 13px;
-      background: #eee;
-    }
-
-    .btn-main {
-      width: 100%;
-      padding: 14px;
-      border-radius: var(--radius);
-      border: none;
-      font-family: 'Fredoka One', cursive;
-      font-size: 16px;
-      color: white;
-      background: var(--success-color);
-      box-shadow: 0 4px 0 #1A7A42;
-    }
-
-    .secondary-btns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .btn-sec {
-      padding: 8px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: white;
-      font-family: 'Nunito', sans-serif;
-      font-weight: 700;
-      font-size: 12px;
-    }
-
-    .confetti-wrap { position: fixed; inset: 0; pointer-events: none; z-index: 200; }
   </style>
 </head>
 <body>
 
-<!-- TELA DE BLOQUEIO PARA PC -->
-<div id="desktop-blocker">
-  <span style="font-size: 50px; margin-bottom: 20px;">📱</span>
-  <h1>Acesso Somente via Celular ou Tablet</h1>
-  <p style="font-weight: normal; margin-top: 10px; opacity: 0.8;">Por favor, abra este link em seu dispositivo móvel para brincar com o Mostrabot.</p>
-</div>
+  <!-- TELA DE BLOQUEIO -->
+  <div id="pc-blocker">
+    <div style="font-size: 60px;">🚫</div>
+    <h1>Acesso Negado</h1>
+    <p>O <b>Mostrabot</b> foi projetado exclusivamente para uso em <b>Celulares e Tablets</b>.<br><br>Por favor, utilize um dispositivo móvel para continuar.</p>
+  </div>
 
-<div class="app-container">
-  <header class="app-header">
-    <div class="brand-title">🤖 Mostrabot</div>
-    <div class="header-step">Passo <b id="step-num">—</b></div>
-  </header>
+  <!-- CONTEÚDO DO JOGO -->
+  <div id="app-content">
+    <header class="app-header">
+      <div class="brand">🤖 Mostrabot</div>
+      <div id="step-info" style="font-weight:900; color:#777">Passo: —</div>
+    </header>
 
-  <main class="app-main">
-    <section class="grid-container">
-      <div style="display:flex; justify-content: space-between; width: 100%; align-items: center;">
-        <span style="font-weight: 800; font-size: 14px;">🎯 Destino: <span id="target-letter" style="color:var(--up-color)">?</span></span>
-        <button class="btn-sec" onclick="setRandomTarget()">🎲 Sortear Alvo</button>
+    <main class="app-main">
+      <div style="display:flex; justify-content: space-between; align-items:center;">
+        <div style="font-weight:900">🎯 Alvo: <span id="target-txt" style="color:var(--up-color)">?</span></div>
+        <button onclick="setRandomTarget()" style="padding:5px 10px; border-radius:8px; border:1px solid #ccc; background:#fff; font-weight:bold">🎲 Sortear</button>
       </div>
-      
+
       <div class="grid" id="grid"></div>
-    </section>
 
-    <div class="status-bar" id="status-bar">Monte sua sequência!</div>
+      <div class="status" id="status-bar">Programe os movimentos!</div>
 
-    <section class="controls-area">
-      <div class="queue-box" id="queue"></div>
-      
-      <div class="cmd-grid">
-        <button class="cmd-btn up" onclick="addCmd('up')">FRENTE</button>
-        <button class="cmd-btn left" onclick="addCmd('left')">ESQ</button>
-        <button class="cmd-btn down" onclick="addCmd('down')">TRÁS</button>
-        <button class="cmd-btn right" onclick="addCmd('right')">DIR</button>
+      <div class="controls">
+        <div class="cmd-grid">
+          <button class="btn up" onclick="addCmd('up')">FRENTE</button>
+          <button class="btn left" onclick="addCmd('left')">ESQ</button>
+          <button class="btn down" onclick="addCmd('down')">TRÁS</button>
+          <button class="btn right" onclick="addCmd('right')">DIR</button>
+        </div>
+        <button class="btn exec-btn" id="btn-exec" onclick="run()">EXECUTAR MOVIMENTO</button>
+        <button onclick="resetAll()" style="background:none; border:none; color:#777; font-weight:bold; text-decoration:underline">Reiniciar Tudo</button>
       </div>
-
-      <button class="btn-main" id="btn-exec" onclick="executeCommands()">EXECUTAR</button>
-      
-      <div class="secondary-btns">
-        <button class="btn-sec" onclick="undoCmd()">↩ Desfazer</button>
-        <button class="btn-sec" onclick="resetAll()">🔄 Reiniciar</button>
-      </div>
-    </section>
-  </main>
-</div>
-
-<div class="confetti-wrap" id="confetti-wrap"></div>
+    </main>
+  </div>
 
 <script>
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function playTone(freq, type, dur) {
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
-  osc.connect(gain); gain.connect(audioCtx.destination);
-  osc.start(); osc.stop(audioCtx.currentTime + dur);
-}
-
-const sounds = {
-  step: () => playTone(400, 'square', 0.1),
-  success: () => { playTone(523, 'sine', 0.2); setTimeout(()=>playTone(659,'sine',0.2),150); },
-  error: () => playTone(150, 'sawtooth', 0.4)
-};
-
-const COLS = 6;
-const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
-const DIRS = {
-  up: { dr: -1, dc: 0, color: '#3A8FE8' },
-  down: { dr: 1, dc: 0, color: '#E8773A' },
-  left: { dr: 0, dc: -1, color: '#9B59B6' },
-  right: { dr: 0, dc: 1, color: '#27AE60' }
-};
-
-let robot = { row: 0, col: 0 };
-let target = null;
-let commands = [];
-let executing = false;
-
-function buildGrid() {
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  CHARS.forEach((ch, idx) => {
-    const r = Math.floor(idx / COLS), c = idx % COLS;
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.id = `cell-${r}-${c}`;
-    cell.textContent = ch;
-    cell.onclick = () => setTarget(r, c);
-    grid.appendChild(cell);
-  });
-}
-
-function setTarget(r, c) {
-  if (executing) return;
-  target = { r, c };
-  document.getElementById('target-letter').textContent = CHARS[r * COLS + c];
-  render();
-}
-
-function setRandomTarget() {
-  let r, c;
-  do { r = Math.floor(Math.random()*6); c = Math.floor(Math.random()*6); }
-  while(r === robot.row && c === robot.col);
-  setTarget(r, c);
-}
-
-function addCmd(dir) {
-  if (executing || commands.length >= 20) return;
-  commands.push(dir);
-  render();
-}
-
-function undoCmd() { if(!executing) { commands.pop(); render(); } }
-
-function render() {
-  document.querySelectorAll('.cell').forEach((el, idx) => {
-    const r = Math.floor(idx/6), c = idx%6;
-    el.className = 'cell';
-    if(r === robot.row && c === robot.col) {
-      el.classList.add(target && r===target.r && c===target.c ? 'robot-on-target' : 'robot-cell');
-      el.textContent = '🤖';
-    } else {
-      if(target && r===target.r && c===target.c) el.classList.add('target-cell');
-      el.textContent = CHARS[idx];
+  // VERIFICAÇÃO DE DISPOSITIVO (CORE DA RESTRIÇÃO)
+  function checkDevice() {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    
+    // Se NÃO for mobile OU NÃO tiver touch (considerando telas grandes de tablet)
+    if (isMobile || (isTouch && window.innerWidth < 1100)) {
+      document.getElementById('pc-blocker').style.display = 'none';
+      document.getElementById('app-content').style.display = 'flex';
+      buildGrid();
     }
-  });
+  }
 
-  const qArea = document.getElementById('queue');
-  qArea.innerHTML = commands.length ? '' : '<small style="color:#aaa; width:100%; text-align:center">Vazio</small>';
-  commands.forEach(cmd => {
-    const chip = document.createElement('div');
-    chip.className = 'q-chip';
-    chip.style.backgroundColor = DIRS[cmd].color;
-    chip.textContent = cmd[0].toUpperCase();
-    qArea.appendChild(chip);
-  });
-}
+  // LÓGICA DO JOGO
+  const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
+  let robot = { r: 0, c: 0 }, target = null, cmds = [], running = false;
 
-async function executeCommands() {
-  if (executing || !target || !commands.length) return;
-  executing = true;
-  const btn = document.getElementById('btn-exec');
-  btn.disabled = true;
-  btn.style.opacity = "0.5";
-
-  for (let i = 0; i < commands.length; i++) {
-    document.getElementById('step-num').textContent = i + 1;
-    const d = DIRS[commands[i]];
-    const nR = robot.row + d.dr, nC = robot.col + d.dc;
-
-    await new Promise(r => setTimeout(r, 450));
-
-    if (nR < 0 || nR >= 6 || nC < 0 || nC >= 6) {
-      sounds.error();
-      setStatus('💥 Bateu na borda!', '#ffe8e8');
-      break;
-    }
-
-    robot.row = nR; robot.col = nC;
-    sounds.step();
+  function buildGrid() {
+    const g = document.getElementById('grid');
+    g.innerHTML = '';
+    CHARS.forEach((ch, i) => {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.id = `c-${Math.floor(i/6)}-${i%6}`;
+      cell.textContent = ch;
+      cell.onclick = () => { if(!running) setTarget(Math.floor(i/6), i%6); };
+      g.appendChild(cell);
+    });
     render();
   }
 
-  if (robot.row === target.r && robot.col === target.c) {
-    sounds.success();
-    setStatus('🎉 PARABÉNS!', '#e8fbf0');
-  } else {
-    sounds.error();
-    setStatus('❌ Alvo não atingido!', '#ffe8e8');
+  function setTarget(r, c) {
+    target = { r, c };
+    document.getElementById('target-txt').textContent = CHARS[r*6+c];
+    render();
   }
-  
-  executing = false;
-  btn.disabled = false;
-  btn.style.opacity = "1";
-}
 
-function setStatus(txt, bg) {
-  const s = document.getElementById('status-bar');
-  s.textContent = txt;
-  s.style.background = bg;
-}
+  function setRandomTarget() {
+    setTarget(Math.floor(Math.random()*6), Math.floor(Math.random()*6));
+  }
 
-function resetAll() {
-  robot = {row:0, col:0}; target = null; commands = [];
-  document.getElementById('target-letter').textContent = '?';
-  document.getElementById('step-num').textContent = '—';
-  setStatus('Monte sua sequência!', '#eee');
-  render();
-}
+  function addCmd(d) { if(!running && cmds.length < 15) { cmds.push(d); render(); } }
 
-buildGrid();
-render();
+  function render() {
+    document.querySelectorAll('.cell').forEach((el, i) => {
+      const r = Math.floor(i/6), c = i%6;
+      el.className = 'cell';
+      if(r === robot.r && c === robot.c) {
+        el.classList.add('robot'); el.textContent = '🤖';
+      } else {
+        if(target && r === target.r && c === target.c) el.classList.add('target');
+        el.textContent = CHARS[i];
+      }
+    });
+  }
+
+  async function run() {
+    if(running || !target || !cmds.length) return;
+    running = true;
+    document.getElementById('btn-exec').style.opacity = '0.5';
+
+    for(let i=0; i<cmds.length; i++) {
+      document.getElementById('step-info').textContent = `Passo: ${i+1}`;
+      const move = { up: [-1,0], down: [1,0], left: [0,-1], right: [0,1] }[cmds[i]];
+      let nR = robot.r + move[0], nC = robot.c + move[1];
+
+      if(nR < 0 || nR > 5 || nC < 0 || nC > 5) {
+        setStatus("💥 Bateu na parede!", "#ff0000"); break;
+      }
+      robot.r = nR; robot.c = nC;
+      render();
+      await new Promise(r => setTimeout(r, 500));
+    }
+
+    if(robot.r === target.r && robot.c === target.c) {
+      setStatus("🎉 CHEGOU!", "#27AE60");
+    } else {
+      setStatus("❌ Tente de novo!", "#E8773A");
+    }
+    running = false;
+    document.getElementById('btn-exec').style.opacity = '1';
+  }
+
+  function setStatus(t, c) {
+    const s = document.getElementById('status-bar');
+    s.textContent = t; s.style.color = c;
+  }
+
+  function resetAll() {
+    robot = {r:0, c:0}; target = null; cmds = [];
+    document.getElementById('target-txt').textContent = '?';
+    document.getElementById('step-info').textContent = 'Passo: —';
+    setStatus("Programe os movimentos!", "#000");
+    render();
+  }
+
+  // Inicia verificação
+  window.onload = checkDevice;
 </script>
 </body>
 </html>
