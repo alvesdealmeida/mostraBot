@@ -3,29 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Mostrabot — Primeiros Passos</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
+  <!-- Biblioteca para os confetes -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --up-color:    #3A8FE8;
-      --up-light:    #D6EAFC;
-      --up-dark:     #1A5FAD;
       --down-color:  #E8773A;
-      --down-light:  #FCE8D6;
-      --down-dark:   #AD4E1A;
       --left-color:  #9B59B6;
-      --left-light:  #EDD9FA;
-      --left-dark:   #6B2D8A;
       --right-color: #27AE60;
-      --right-light: #D5F5E3;
-      --right-dark:  #1A7A42;
       --target-color: #F5C842;
-      --target-glow:  rgba(245,200,66,0.4);
       --robot-color:  #3A8FE8;
       --success-color:#27AE60;
       --error-color:  #E84040;
@@ -34,27 +24,17 @@
       --border:        #E8E0D8;
       --text:          #1A1A2E;
       --muted:         #7A7A8A;
-      --grid-cell:     #FFFFFF;
-      --grid-border:   #D8D0C8;
       --radius:        14px;
-      --shadow:        0 3px 14px rgba(0,0,0,0.09);
     }
-
-    html, body { height: 100%; }
 
     body {
       font-family: 'Nunito', sans-serif;
       background: var(--bg);
-      background-image:
-        radial-gradient(circle at 10% 10%, rgba(58,143,232,0.08) 0%, transparent 40%),
-        radial-gradient(circle at 90% 90%, rgba(39,174,96,0.08) 0%, transparent 40%);
       color: var(--text);
-      min-height: 100%;
       overflow-x: hidden;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ── HEADER ── */
     .app-header {
       background: var(--card);
       border-bottom: 2px solid var(--border);
@@ -62,49 +42,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
       position: sticky;
       top: 0;
-      z-index: 20;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      z-index: 100;
     }
 
-    .header-brand {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .brand-title { font-family: 'Fredoka One', cursive; color: var(--robot-color); font-size: 20px; }
 
-    .brand-robot { font-size: 28px; line-height: 1; }
-    .brand-text  { line-height: 1.1; }
-
-    .brand-title {
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(16px, 4vw, 22px);
-      color: var(--robot-color);
-    }
-
-    .brand-sub {
-      font-size: clamp(9px, 2vw, 11px);
-      color: var(--muted);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .header-step {
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(13px, 3vw, 16px);
-      color: var(--muted);
-      text-align: right;
-    }
-
-    .header-step b { color: var(--robot-color); }
-
-    /* ══════════════════════════════════════
-        MAIN LAYOUT
-        Mobile: column | Tablet+: row
-     ══════════════════════════════════════ */
     .app-main {
       display: flex;
       flex-direction: column;
@@ -114,995 +58,280 @@
       margin: 0 auto;
     }
 
-    @media (min-width: 700px) {
-      .app-main {
-        flex-direction: row;
-        align-items: flex-start;
-        padding: 16px;
-        gap: 16px;
-      }
-    }
+    .grid-section { display: flex; flex-direction: column; align-items: center; width: 100%; }
 
-    /* ══════════════════════════════════════
-        GRID SECTION
-     ══════════════════════════════════════ */
-    .grid-section {
-      flex: 0 0 auto;
+    .layout-container {
       display: flex;
       flex-direction: column;
+      align-items: flex-end;
       gap: 10px;
-      align-items: center;
-      width: 100%;
     }
-
-    @media (min-width: 700px) {
-      .grid-section { width: clamp(280px, 48%, 460px); }
-    }
-
-    .grid-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .info-chip {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: clamp(11px, 2.5vw, 13px);
-      font-weight: 700;
-    }
-
-    .chip-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .chip-robot  { background: var(--robot-color); }
-    .chip-target { background: var(--target-color); border: 2px solid #c89a00; }
-
-    /* ── GRID ── */
-    .grid-wrap { position: relative; width: 100%; display: flex; justify-content: center; }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: clamp(3px, 1vw, 6px);
+      gap: 4px;
       background: var(--card);
       border-radius: var(--radius);
-      padding: clamp(6px, 2vw, 12px);
-      box-shadow: var(--shadow);
+      padding: 8px;
       border: 2px solid var(--border);
-      width: 100%;
-      max-width: 460px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
 
     .cell {
-      width:  clamp(36px, calc((min(96vw, 460px) - 36px) / 6), 72px);
-      height: clamp(36px, calc((min(96vw, 460px) - 36px) / 6), 72px);
-      border-radius: 10px;
-      background: var(--grid-cell);
-      border: 2px solid var(--grid-border);
+      width: clamp(40px, 13vw, 65px);
+      height: clamp(40px, 13vw, 65px);
+      border-radius: 8px;
+      background: #fff;
+      border: 2px solid #D8D0C8;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Fredoka One', cursive;
-      font-size: clamp(13px, 3.5vw, 24px);
-      color: var(--text);
+      font-size: 18px;
       cursor: pointer;
-      transition: transform 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
-      position: relative;
-      user-select: none;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
     }
 
-    .cell:hover:not(.robot-cell):not(.target-cell) {
-      background: #F0F6FF;
-      border-color: var(--robot-color);
-      transform: scale(1.06);
-    }
+    .cell.robot-cell { border-color: var(--robot-color); background: #EEF6FF; font-size: 28px; }
+    .cell.target-cell { border-color: var(--target-color); background: #FFF9D6; border-width: 3px; }
+    .cell.robot-on-target { border-color: var(--target-color); background: #FFFDE6; animation: pulse 0.5s infinite alternate; }
 
-    .cell.target-cell {
-      background: #FFF9D6;
-      border-color: var(--target-color);
-      border-width: 3px;
-      box-shadow: 0 0 0 3px var(--target-glow);
-      animation: pulse-target 1.8s ease-in-out infinite;
-      color: #7a5c00;
-    }
+    @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
 
-    @keyframes pulse-target {
-      0%, 100% { box-shadow: 0 0 0 3px rgba(245,200,66,0.4); }
-      50%       { box-shadow: 0 0 0 7px rgba(245,200,66,0.1); }
-    }
-
-    .cell.robot-cell {
-      background: #EEF6FF;
-      border-color: var(--robot-color);
-      border-width: 3px;
-      box-shadow: 0 0 0 3px rgba(58,143,232,0.25);
-      font-size: clamp(18px, 5vw, 32px);
-    }
-
-    .cell.robot-on-target {
-      background: #FFFDE6;
-      border-color: var(--target-color);
-      border-width: 3px;
-      box-shadow: 0 0 0 5px rgba(245,200,66,0.35);
-      animation: pulse-win 0.6s ease-in-out infinite alternate;
-      font-size: clamp(18px, 5vw, 32px);
-    }
-
-    @keyframes pulse-win {
-      from { transform: scale(1); }
-      to   { transform: scale(1.08); }
-    }
-
-    .cell.active-step {
-      outline: 3px solid #FF6B35;
-      outline-offset: 1px;
-    }
-
-    .cell-letter { pointer-events: none; }
-
-    /* ── TARGET BADGE ── */
-    .target-display {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--card);
-      border: 2px solid var(--target-color);
-      border-radius: 14px;
-      padding: 8px 16px;
-      font-family: 'Fredoka One', cursive;
-      width: 100%;
-      justify-content: center;
-      box-shadow: 0 2px 8px rgba(245,200,66,0.2);
-      flex-wrap: wrap;
-    }
-
-    .target-label { font-size: 13px; color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 700; }
-    .target-val   { font-size: 28px; color: #7a5c00; }
-    .target-hint  { font-size: 12px; color: var(--muted); font-family: 'Nunito', sans-serif; }
-
-    .btn-random {
-      background: var(--target-color);
+    .btn-exec-mini {
+      width: clamp(35px, 11vw, 55px);
+      height: 25px;
+      border-radius: 6px;
+      background: var(--success-color);
+      color: white;
+      font-size: 16px;
       border: none;
-      border-radius: 10px;
-      padding: 6px 14px;
-      font-family: 'Fredoka One', cursive;
-      font-size: 13px;
-      color: #5a3c00;
+      box-shadow: 0 3px 0 #1A7A42;
       cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-      box-shadow: 0 3px 0 #c89a00;
-      touch-action: manipulation;
-    }
-
-    .btn-random:hover  { background: #f0bb20; }
-    .btn-random:active { transform: translateY(2px); box-shadow: 0 1px 0 #c89a00; }
-
-    /* ══════════════════════════════════════
-        CONTROLS SECTION
-     ══════════════════════════════════════ */
-    .controls-section {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      width: 100%;
-      min-width: 0;
-    }
-
-    .panel {
-      background: var(--card);
-      border-radius: var(--radius);
-      border: 2px solid var(--border);
-      padding: 12px;
-      box-shadow: var(--shadow);
-    }
-
-    .panel-title {
-      font-family: 'Fredoka One', cursive;
-      font-size: 15px;
-      color: var(--muted);
-      margin-bottom: 10px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      margin-right: 5px;
+      padding: 0;
+      transition: transform 0.1s, box-shadow 0.1s;
     }
 
-    .cmd-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto auto;
+    .btn-exec-mini:active { transform: translateY(2px); box-shadow: 0 1px 0 #1A7A42; }
+    .btn-exec-mini:disabled { background: #90C8A0; filter: grayscale(0.6); box-shadow: none; cursor: not-allowed; }
+
+    .cmd-row {
+      display: flex;
+      justify-content: center;
       gap: 8px;
+      margin: 5px 0;
     }
 
     .cmd-btn {
+      width: 58px;
+      height: 58px;
       border: none;
-      border-radius: 14px;
-      padding: clamp(10px, 3vw, 16px) 8px;
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(14px, 3.5vw, 18px);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: transform 0.1s, box-shadow 0.1s, filter 0.15s;
-      touch-action: manipulation;
-      user-select: none;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .cmd-btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(255,255,255,0);
-      transition: background 0.15s;
-    }
-
-    .cmd-btn:active::after { background: rgba(255,255,255,0.25); }
-    .cmd-btn:active { transform: translateY(3px); }
-
-    .cmd-btn.up    { background: var(--up-color);    color: #fff; box-shadow: 0 5px 0 var(--up-dark);    grid-column: 1 / -1; }
-    .cmd-btn.down  { background: var(--down-color);  color: #fff; box-shadow: 0 5px 0 var(--down-dark);  grid-column: 1 / -1; }
-    .cmd-btn.left  { background: var(--left-color);  color: #fff; box-shadow: 0 5px 0 var(--left-dark);  }
-    .cmd-btn.right { background: var(--right-color); color: #fff; box-shadow: 0 5px 0 var(--right-dark); }
-
-    .cmd-btn:disabled { filter: opacity(0.45) grayscale(0.4); cursor: not-allowed; }
-    .cmd-btn:disabled:active { transform: none; }
-
-    .cmd-arrow { font-size: clamp(18px, 5vw, 26px); }
-    .cmd-label { font-size: clamp(12px, 3vw, 16px); }
-
-    .queue-area {
-      min-height: 64px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      align-content: flex-start;
-      max-height: 130px;
-      overflow-y: auto;
-      background: #F7F4F0;
-      border-radius: 10px;
-      padding: 8px;
-      border: 1.5px dashed var(--border);
-    }
-
-    .queue-empty {
-      width: 100%;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 700;
-      padding: 10px;
-    }
-
-    .q-chip {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 17px;
-      font-weight: 900;
-      color: #fff;
-      transition: transform 0.15s;
-      flex-shrink: 0;
-    }
-
-    .q-chip.up    { background: var(--up-color); }
-    .q-chip.down  { background: var(--down-color); }
-    .q-chip.left  { background: var(--left-color); }
-    .q-chip.right { background: var(--right-color); }
-
-    .q-chip.current-step {
-      outline: 3px solid #FF6B35;
-      outline-offset: 1px;
-      transform: scale(1.2);
-    }
-
-    .q-chip.done { filter: brightness(0.6); }
-
-    .queue-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .btn-undo, .btn-clear {
-      flex: 1;
-      border: none;
-      border-radius: 10px;
-      padding: 8px;
-      font-family: 'Fredoka One', cursive;
-      font-size: 13px;
-      cursor: pointer;
-      transition: transform 0.1s, filter 0.15s;
-      touch-action: manipulation;
-    }
-
-    .btn-undo  { background: #F0E6FF; color: var(--left-dark);  box-shadow: 0 3px 0 #C8A0E0; }
-    .btn-clear { background: #FFE8E8; color: #A02020;            box-shadow: 0 3px 0 #E0A0A0; }
-    .btn-undo:active, .btn-clear:active  { transform: translateY(2px); box-shadow: 0 1px 0; }
-    .btn-undo:disabled, .btn-clear:disabled { filter: opacity(0.4); cursor: not-allowed; }
-
-    .btn-exec {
-      width: 100%;
-      padding: clamp(12px, 3vw, 16px);
-      border: none;
-      border-radius: 14px;
-      background: var(--success-color);
-      color: #fff;
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(17px, 4vw, 21px);
-      cursor: pointer;
-      box-shadow: 0 6px 0 #1A7A42;
-      transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
-      touch-action: manipulation;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .btn-exec:hover  { background: #22A055; }
-    .btn-exec:active { transform: translateY(4px); box-shadow: 0 2px 0 #1A7A42; }
-    .btn-exec:disabled { background: #90C8A0; cursor: not-allowed; box-shadow: 0 4px 0 #5A9A70; }
-    .btn-exec:disabled:active { transform: none; box-shadow: 0 4px 0 #5A9A70; }
-
-    .btn-reset {
-      width: 100%;
-      padding: 10px;
-      border: 2px solid var(--border);
       border-radius: 12px;
-      background: var(--card);
-      color: var(--muted);
-      font-family: 'Fredoka One', cursive;
-      font-size: 14px;
       cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-      touch-action: manipulation;
-    }
-
-    .btn-reset:hover { background: #F0F0F0; color: var(--text); }
-
-    .status-bar {
-      border-radius: 12px;
-      padding: 10px 14px;
-      font-family: 'Fredoka One', cursive;
-      font-size: clamp(13px, 3vw, 16px);
-      text-align: center;
-      transition: background 0.3s, color 0.3s, border-color 0.3s;
-      background: #F4F4F4;
-      color: var(--muted);
-      border: 2px solid var(--border);
-    }
-
-    .status-bar.success { background: #E8FBF0; color: var(--success-color); border-color: var(--success-color); }
-    .status-bar.error   { background: #FFE8E8; color: var(--error-color);   border-color: var(--error-color); }
-    .status-bar.running { background: #EEF6FF; color: var(--robot-color);   border-color: var(--robot-color); }
-    .status-bar.warn    { background: #FFF9D6; color: #7a5c00;               border-color: var(--target-color); }
-
-    .speed-row {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted);
+      justify-content: center;
+      transition: transform 0.1s, box-shadow 0.1s;
     }
 
-    .speed-row input[type=range] {
-      flex: 1;
-      accent-color: var(--robot-color);
+    .cmd-btn.left  { background: var(--left-color);  box-shadow: 0 4px 0 #6B2D8A; }
+    .cmd-btn.up    { background: var(--up-color);    box-shadow: 0 4px 0 #1A5FAD; }
+    .cmd-btn.down  { background: var(--down-color);  box-shadow: 0 4px 0 #AD4E1A; }
+    .cmd-btn.right { background: var(--right-color); box-shadow: 0 4px 0 #1A7A42; }
+
+    .cmd-btn:active { transform: translateY(3px); box-shadow: none; }
+    .cmd-arrow { font-size: 24px; color: white; }
+
+    .panel { background: white; border-radius: var(--radius); padding: 12px; border: 2px solid var(--border); }
+    .status-bar { padding: 10px; text-align: center; border-radius: 10px; font-family: 'Fredoka One'; margin-bottom: 5px; border: 2px solid var(--border); }
+    .status-bar.success { color: var(--success-color); border-color: var(--success-color); background: #E8FBF0; }
+    .status-bar.error { color: var(--error-color); border-color: var(--error-color); background: #FFE8E8; }
+
+    .queue-area { display: flex; flex-wrap: wrap; gap: 5px; background: #F7F4F0; padding: 10px; border-radius: 10px; min-height: 50px; }
+    .q-chip { width: 28px; height: 28px; border-radius: 6px; color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .q-chip.up { background: var(--up-color); } .q-chip.down { background: var(--down-color); }
+    .q-chip.left { background: var(--left-color); } .q-chip.right { background: var(--right-color); }
+
+    #aviso-desktop-somente { display: none !important; }
+    @media screen and (min-width: 1025px) and (pointer: fine) {
+        #aviso-desktop-somente { display: flex !important; position: fixed; inset: 0; background: #FFF8F0; z-index: 999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .app-header, .app-main { display: none !important; }
     }
-
-    .confetti-wrap {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 100;
-      overflow: hidden;
-    }
-
-    .confetti-piece {
-      position: absolute;
-      top: -10px;
-      width: 10px;
-      height: 14px;
-      border-radius: 3px;
-      animation: fall linear forwards;
-    }
-
-    @keyframes fall {
-      to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
-    }
-
-    .legend-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text);
-      background: var(--card);
-      border-radius: 8px;
-      padding: 3px 8px;
-      border: 1.5px solid var(--border);
-    }
-
-    .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
-
-    .about-toggle {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--muted);
-      cursor: pointer;
-      padding: 0;
-      background: none;
-      border: none;
-      font-family: 'Nunito', sans-serif;
-      touch-action: manipulation;
-    }
-
-    .about-toggle:hover { color: var(--robot-color); }
-
-    .about-content {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid var(--border);
-    }
-
-    .about-content b { color: var(--text); }
-    .about-content.hidden { display: none; }
-
-    @media (min-width: 700px) {
-      .app-main { flex-direction: row; align-items: flex-start; padding: 16px; gap: 16px; }
-      .grid-section { width: clamp(280px, 48%, 460px); }
-      .cell {
-        width:  clamp(42px, calc((min(48vw, 460px) - 36px) / 6), 72px);
-        height: clamp(42px, calc((min(48vw, 460px) - 36px) / 6), 72px);
-      }
-    }
-
-    @media (max-width: 360px) {
-      .app-main   { padding: 8px; gap: 8px; }
-      .panel      { padding: 9px; }
-      .target-hint { display: none; }
-      .cmd-label  { font-size: 11px; }
-    }  
-}
- /* CAMADA 1: Esconde o aviso de forma agressiva em qualquer dispositivo móvel */
-#aviso-desktop-somente {
-    display: none !important;
-}
-
-/* CAMADA 2: Só mostra se for uma tela larga (Desktop) */
-@media screen and (min-width: 1025px) {
-    
-    /* CAMADA 3: Só mostra se o dispositivo usar MOUSE (ponteiro fino) */
-    /* Isso ignora iPads e Celulares grandes que usam o toque */
-    @media (pointer: fine) {
-        #aviso-desktop-somente {
-            display: flex !important;
-            position: fixed;
-            inset: 0;
-            background: #FFF8F0;
-            z-index: 999999;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Esconde o jogo apenas quando o aviso acima estiver ativo */
-        .app-header, .app-main {
-            display: none !important;
-        }
-    }
-}
-
-/* GARANTIA: Se for um dispositivo de toque (Celular/Tablet), 
-   forçamos o jogo a aparecer, não importa o tamanho da tela */
-@media (pointer: coarse) {
-    #aviso-desktop-somente {
-        display: none !important;
-    }
-    .app-header, .app-main {
-        display: flex !important;
-    }
-}
   </style>
 </head>
 <body>
 
- <div id="aviso-desktop-somente" style="display:none; position:fixed; inset:0; background:#FFF8F0; z-index:999999; flex-direction:column; justify-content:center; align-items:center; text-align:center; font-family:'Fredoka One', cursive; padding:20px;">
-  <span style="font-size: 80px;">📱</span>
-  <h1 style="color: #3A8FE8; font-size: 24px;">Acesso pelo Celular</h1>
-  <p style="font-family: 'Nunito', sans-serif; color: #7A7A8A;">
-    Detectamos que você está em um Computador.<br>
-    <b>Abra no seu Celular para jogar!</b>
-  </p>
+<div id="aviso-desktop-somente">
+  <h1>📱 Acesso pelo Celular</h1>
+  <p>Abra no seu Celular para jogar!</p>
 </div>
 
 <header class="app-header">
-  <div class="header-brand">
-    <span class="brand-robot">🤖</span>
-    <div class="brand-text">
-      <div class="brand-title">Mostrabot</div>
-      <div class="brand-sub">Kit EDUC · Primeiros Passos</div>
-    </div>
-  </div>
-  <div class="header-step" id="step-display">
-    Passo <b id="step-num">—</b>
-  </div>
+  <div class="brand-title">🤖 Mostrabot</div>
+  <div style="font-family: 'Fredoka One'; color: var(--muted)">Passo <b id="step-num">—</b></div>
 </header>
-
-<div class="confetti-wrap" id="confetti-wrap"></div>
 
 <main class="app-main">
   <section class="grid-section">
-    <div class="target-display">
-      <span class="target-label">🎯 Destino:</span>
-      <span class="target-val" id="target-letter">?</span>
-      <span class="target-hint">clique na grade para escolher</span>
-      <button class="btn-random" id="btn-random" onclick="setRandomTarget()" title="Sortear destino">🎲 Sortear</button>
+    <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+      <div class="panel" style="padding: 5px 15px; font-weight: 800;">🎯 Destino: <span id="target-letter">?</span></div>
+      <button onclick="setRandomTarget()" style="padding: 8px 15px; border-radius: 10px; border:none; background: var(--target-color); font-family:'Fredoka One'; cursor:pointer;">🎲 Sortear</button>
     </div>
 
-    <div class="grid-wrap">
+    <div class="layout-container">
       <div class="grid" id="grid"></div>
+      <button class="btn-exec-mini" id="btn-exec" onclick="executeCommands()">▶</button>
     </div>
-
-    <div class="legend-row">
-      <div class="legend-item"><div class="legend-dot" style="background:var(--robot-color);"></div> Mostrabot</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--target-color); border:1px solid #c89a00;"></div> Destino</div>
-      <div class="legend-item"><span style="font-size:11px;">👆</span> Toque p/ mover destino</div>
-    </div>
+    
+    <div style="margin-top: 10px; font-size: 11px; color: var(--muted);">🤖 Robô | 🟡 Destino | 👆 Toque na grade</div>
   </section>
 
-  <section class="controls-section">
-    <div class="status-bar" id="status-bar">
-      Escolha o destino e programe o Mostrabot! 🚀
+  <div class="status-bar" id="status-bar">Escolha o destino e programe!</div>
+
+  <div class="panel">
+    <div style="font-family:'Fredoka One'; font-size: 14px; color: var(--muted); margin-bottom: 8px;">🧩 Blocos de Comando</div>
+    <div class="cmd-row">
+      <button class="cmd-btn left" onclick="addCmd('left')" id="btn-left"><span class="cmd-arrow">⬅️</span></button>
+      <button class="cmd-btn up" onclick="addCmd('up')" id="btn-up"><span class="cmd-arrow">⬆️</span></button>
+      <button class="cmd-btn down" onclick="addCmd('down')" id="btn-down"><span class="cmd-arrow">⬇️</span></button>
+      <button class="cmd-btn right" onclick="addCmd('right')" id="btn-right"><span class="cmd-arrow">➡️</span></button>
     </div>
+  </div>
 
-    <div class="panel">
-      <div class="panel-title">🧩 Blocos de Comando</div>
-      <div class="cmd-grid">
-        <button class="cmd-btn up"    onclick="addCmd('up')"    id="btn-up">
-          <span class="cmd-arrow">⬆️</span><span class="cmd-label">Para Frente</span>
-        </button>
-        <button class="cmd-btn left"  onclick="addCmd('left')"  id="btn-left">
-          <span class="cmd-arrow">⬅️</span><span class="cmd-label">Esquerda</span>
-        </button>
-        <button class="cmd-btn right" onclick="addCmd('right')" id="btn-right">
-          <span class="cmd-arrow">➡️</span><span class="cmd-label">Direita</span>
-        </button>
-        <button class="cmd-btn down"  onclick="addCmd('down')"  id="btn-down">
-          <span class="cmd-arrow">⬇️</span><span class="cmd-label">Para Trás</span>
-        </button>
-      </div>
+  <div class="panel">
+    <div style="font-family:'Fredoka One'; font-size: 14px; color: var(--muted); margin-bottom: 8px;">📋 Sequência</div>
+    <div class="queue-area" id="queue"></div>
+    <div style="display: flex; gap: 8px; margin-top: 10px;">
+      <button onclick="undoCmd()" id="btn-undo" style="flex:1; padding: 8px; border-radius: 8px; border:none; background:#F0E6FF; font-family:'Fredoka One';">↩ Desfazer</button>
+      <button onclick="clearCmds()" id="btn-clear" style="flex:1; padding: 8px; border-radius: 8px; border:none; background:#FFE8E8; font-family:'Fredoka One';">🗑 Limpar</button>
     </div>
+  </div>
 
-    <div class="panel">
-      <div class="panel-title">📋 Sequência de Comandos <span id="cmd-count" style="font-size:13px;color:var(--muted);">(0)</span></div>
-      <div class="queue-area" id="queue">
-        <div class="queue-empty" id="queue-empty">Adicione blocos de comando aqui!</div>
-      </div>
-      <div class="queue-actions">
-        <button class="btn-undo"  onclick="undoCmd()"   id="btn-undo">↩ Desfazer</button>
-        <button class="btn-clear" onclick="clearCmds()" id="btn-clear">🗑 Apagar Tudo</button>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-title">⚡ Velocidade de Execução</div>
-      <div class="speed-row">
-        <span>🐢</span>
-        <input type="range" id="speed-slider" min="1" max="5" value="3" step="1" />
-        <span>🐇</span>
-        <span id="speed-label" style="min-width:60px;font-size:12px;">Normal</span>
-      </div>
-    </div>
-
-    <button class="btn-exec" id="btn-exec" onclick="executeCommands()">
-      ▶ Executar Programa
-    </button>
-
-    <button class="btn-reset" id="btn-reset" onclick="resetAll()">
-      🔄 Reiniciar Tudo
-    </button>
-
-    <div class="panel">
-      <button class="about-toggle" onclick="toggleAbout()">
-        ℹ️ Sobre a atividade <span id="about-arrow">▼</span>
-      </button>
-      <div class="about-content hidden" id="about-content">
-        Inspirado nos princípios de <b>Seymour Papert</b> e na lógica da linguagem <b>LOGO</b>,
-        o Mostrabot ensina pensamento computacional por meio da experimentação.
-        As crianças montam sequências de blocos (Para Frente, Para Trás, Esquerda, Direita)
-        para conduzir o robô até a letra ou número escolhido.
-        O erro é parte do aprendizado — ajuste a sequência e tente novamente! 🌟
-      </div>
-    </div>
-  </section>
+  <button class="btn-reset" onclick="resetAll()" style="width:100%; padding: 12px; border-radius: 12px; border:2px solid var(--border); background:white; font-family:'Fredoka One'; color: var(--muted);">🔄 Reiniciar Tudo</button>
 </main>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════
-// SONS (Web Audio API)
-// ═══════════════════════════════════════════════════════════════════════════
+// ── SISTEMA DE SOM ──
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
 function playSound(type) {
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
+    osc.connect(gain); gain.connect(audioCtx.destination);
     const now = audioCtx.currentTime;
-
     if (type === 'step') {
-        // Som de "beep" curto para o passo
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(600, now);
+        osc.type = 'sine'; osc.frequency.setValueAtTime(600, now);
         osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
-        gain.gain.setValueAtTime(0.1, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-        osc.start(now);
-        osc.stop(now + 0.1);
-    } 
-    else if (type === 'success') {
-        // Melodia de vitória (Do-Mi-Sol-Do alto)
-        const notes = [523, 659, 783, 1046];
-        notes.forEach((freq, i) => {
-            const o = audioCtx.createOscillator();
-            const g = audioCtx.createGain();
-            o.connect(g);
-            g.connect(audioCtx.destination);
-            o.type = 'triangle';
-            o.frequency.setValueAtTime(freq, now + i * 0.1);
-            g.gain.setValueAtTime(0.1, now + i * 0.1);
-            g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.2);
-            o.start(now + i * 0.1);
-            o.stop(now + i * 0.1 + 0.2);
+        gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.start(now); osc.stop(now + 0.1);
+    } else if (type === 'success') {
+        [523, 659, 783, 1046].forEach((f, i) => {
+            const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+            o.connect(g); g.connect(audioCtx.destination);
+            o.type = 'triangle'; o.frequency.setValueAtTime(f, now + i * 0.1);
+            g.gain.setValueAtTime(0.1, now + i * 0.1); o.start(now + i * 0.1); o.stop(now + i * 0.1 + 0.2);
         });
-    } 
-    else if (type === 'error') {
-        // Som de erro grave e descendente
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(150, now);
+    } else if (type === 'error') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now);
         osc.frequency.linearRampToValueAtTime(50, now + 0.4);
-        gain.gain.setValueAtTime(0.1, now);
-        gain.gain.linearRampToValueAtTime(0, now + 0.4);
-        osc.start(now);
-        osc.stop(now + 0.4);
+        gain.gain.setValueAtTime(0.1, now); osc.start(now); osc.stop(now + 0.4);
     }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// CONSTANTS
-// ═══════════════════════════════════════════════════════════════════════════
+// ── LÓGICA DO JOGO ──
 const COLS = 6, ROWS = 6;
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
+const DIRS = { up: { dr: -1, dc: 0, arrow: '⬆' }, down: { dr: 1, dc: 0, arrow: '⬇' }, left: { dr: 0, dc: -1, arrow: '⬅' }, right: { dr: 0, dc: 1, arrow: '➡' } };
 
-const DIRS = {
-  up:    { dr: -1, dc:  0, arrow: '⬆', label: 'Para Frente' },
-  down:  { dr:  1, dc:  0, arrow: '⬇', label: 'Para Trás'    },
-  left:  { dr:  0, dc: -1, arrow: '⬅', label: 'Esquerda'     },
-  right: { dr:  0, dc:  1, arrow: '➡', label: 'Direita'      },
-};
-
-const SPEED_MAP    = { 1: 900, 2: 600, 3: 380, 4: 220, 5: 100 };
-const SPEED_LABELS = { 1: 'Muito Lento', 2: 'Lento', 3: 'Normal', 4: 'Rápido', 5: 'Turbo 🚀' };
-
-let robot    = { row: 0, col: 0 };
-let target   = null;
-let commands = [];
-let executing = false;
-let execAbort = false;
-
-function init() {
-  buildGrid();
-  renderAll();
-  updateButtons();
-  document.getElementById('speed-slider').addEventListener('input', updateSpeedLabel);
-  updateSpeedLabel();
-}
+let robot = { row: 0, col: 0 }, target = null, commands = [], executing = false;
 
 function buildGrid() {
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
   CHARS.forEach((ch, idx) => {
-    const row = Math.floor(idx / COLS);
-    const col = idx % COLS;
+    const row = Math.floor(idx / COLS), col = idx % COLS;
     const cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.dataset.row = row;
-    cell.dataset.col = col;
-    cell.dataset.ch  = ch;
-    cell.id = `cell-${row}-${col}`;
-    cell.addEventListener('click', () => onCellClick(row, col));
+    cell.className = 'cell'; cell.id = `cell-${row}-${col}`;
+    cell.textContent = ch;
+    cell.onclick = () => onCellClick(row, col);
     grid.appendChild(cell);
-  });
-}
-
-function renderAll() {
-  renderGrid();
-  renderQueue();
-}
-
-function renderGrid() {
-  CHARS.forEach((ch, idx) => {
-    const row = Math.floor(idx / COLS);
-    const col = idx % COLS;
-    const cell = document.getElementById(`cell-${row}-${col}`);
-    const isRobot  = robot.row === row && robot.col === col;
-    const isTgt    = target && target.row === row && target.col === col;
-    const bothOnIt = isRobot && isTgt;
-
-    cell.className = 'cell';
-    if (bothOnIt)       cell.classList.add('robot-on-target');
-    else if (isRobot)   cell.classList.add('robot-cell');
-    else if (isTgt)     cell.classList.add('target-cell');
-
-    if (isRobot) cell.textContent = '🤖';
-    else          cell.textContent = ch;
-  });
-}
-
-function renderQueue() {
-  const queueEl = document.getElementById('queue');
-  const emptyEl = document.getElementById('queue-empty');
-  const countEl = document.getElementById('cmd-count');
-  countEl.textContent = `(${commands.length})`;
-  if (commands.length === 0) {
-    emptyEl.style.display = 'block';
-    queueEl.querySelectorAll('.q-chip').forEach(c => c.remove());
-    return;
-  }
-  emptyEl.style.display = 'none';
-  queueEl.querySelectorAll('.q-chip').forEach(c => c.remove());
-  commands.forEach((cmd, i) => {
-    const chip = document.createElement('div');
-    chip.className = `q-chip ${cmd}`;
-    chip.id = `chip-${i}`;
-    chip.textContent = DIRS[cmd].arrow;
-    chip.title = DIRS[cmd].label;
-    queueEl.appendChild(chip);
   });
 }
 
 function onCellClick(row, col) {
   if (executing) return;
-  if (robot.row === row && robot.col === col) return;
   target = { row, col };
   document.getElementById('target-letter').textContent = CHARS[row * COLS + col];
-  setStatus('neutral', `Destino definido: ${CHARS[row * COLS + col]} — Agora programe o Mostrabot! 🤖`);
-  renderGrid();
-  updateButtons();
+  renderGrid(); updateButtons();
 }
 
-function setRandomTarget() {
-  if (executing) return;
-  let r, c;
-  do {
-    r = Math.floor(Math.random() * ROWS);
-    c = Math.floor(Math.random() * COLS);
-  } while (r === robot.row && c === robot.col);
-  onCellClick(r, c);
+function renderGrid() {
+  CHARS.forEach((ch, idx) => {
+    const row = Math.floor(idx / COLS), col = idx % COLS, cell = document.getElementById(`cell-${row}-${col}`);
+    cell.className = 'cell';
+    if (robot.row === row && robot.col === col) {
+      cell.textContent = '🤖'; cell.classList.add('robot-cell');
+      if (target && row === target.row && col === target.col) cell.classList.add('robot-on-target');
+    } else {
+      cell.textContent = ch;
+      if (target && row === target.row && col === target.col) cell.classList.add('target-cell');
+    }
+  });
 }
 
 function addCmd(dir) {
-  if (executing) return;
-  if (commands.length >= 24) {
-    setStatus('warn', 'Sequência máxima de 24 comandos atingida!');
-    return;
-  }
-  commands.push(dir);
-  renderQueue();
-  updateButtons();
-  if (!target) setStatus('warn', 'Não esqueça de escolher um destino! 🎯');
-  else setStatus('neutral', `Bloco adicionado: ${DIRS[dir].label} — Total: ${commands.length} comandos`);
+  if (executing || commands.length >= 24) return;
+  commands.push(dir); renderQueue(); updateButtons();
 }
 
-function undoCmd() {
-  if (executing || commands.length === 0) return;
-  commands.pop();
-  renderQueue();
-  updateButtons();
+function renderQueue() {
+  const q = document.getElementById('queue');
+  q.innerHTML = commands.map(cmd => `<div class="q-chip ${cmd}">${DIRS[cmd].arrow}</div>`).join('');
 }
 
-function clearCmds() {
-  if (executing) return;
-  commands = [];
-  renderQueue();
-  updateButtons();
-}
+function undoCmd() { commands.pop(); renderQueue(); updateButtons(); }
+function clearCmds() { commands = []; renderQueue(); updateButtons(); }
 
 async function executeCommands() {
-  if (executing) return;
-  if (!target) { setStatus('warn', '⚠️ Escolha um destino primeiro!'); return; }
-  if (commands.length === 0) { setStatus('warn', '⚠️ Adicione comandos!'); return; }
-  
-  // Ativa áudio (necessário em alguns navegadores após interação)
+  if (executing || !target || commands.length === 0) return;
   if (audioCtx.state === 'suspended') audioCtx.resume();
-
-  executing  = true;
-  execAbort  = false;
-  setControlsDisabled(true);
-  setStatus('running', '▶ Executando...');
-
-  const delay = SPEED_MAP[document.getElementById('speed-slider').value];
-  let pos = { ...robot };
+  executing = true; setControlsDisabled(true);
+  let currentPos = { ...robot };
 
   for (let i = 0; i < commands.length; i++) {
-    if (execAbort) break;
+    document.getElementById('step-num').textContent = i + 1;
+    const dir = DIRS[commands[i]], nr = currentPos.row + dir.dr, nc = currentPos.col + dir.dc;
+    await new Promise(r => setTimeout(r, 400));
+    if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS) { playSound('error'); setStatus('error', '💥 Saiu da grade!'); break; }
+    playSound('step');
+    currentPos = { row: nr, col: nc }; robot = { ...currentPos }; renderGrid();
+  }
 
-    document.querySelectorAll('.q-chip').forEach((c, ci) => {
-      c.classList.remove('current-step', 'done');
-      if (ci < i)  c.classList.add('done');
-      if (ci === i) c.classList.add('current-step');
+  if (robot.row === target.row && robot.col === target.col) { 
+    playSound('success'); 
+    setStatus('success', '🎉 Você conseguiu!');
+    // Lançar confetes!
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#3A8FE8', '#E8773A', '#9B59B6', '#27AE60', '#F5C842']
     });
-
-    document.getElementById('step-num').textContent = `${i + 1} / ${commands.length}`;
-    const dir    = DIRS[commands[i]];
-    const newRow = pos.row + dir.dr;
-    const newCol = pos.col + dir.dc;
-
-    await sleep(delay);
-
-    if (newRow < 0 || newRow >= ROWS || newCol < 0 || newCol >= COLS) {
-      playSound('error'); // SOM DE ERRO
-      await flashCell(pos.row, pos.col, '#FFE0E0');
-      setStatus('error', `💥 Saiu do mapa no passo ${i + 1}!`);
-      finishExec(false);
-      return;
-    }
-
-    playSound('step'); // SOM DE PASSO
-    pos.row = newRow;
-    pos.col = newCol;
-    robot   = { ...pos };
-    renderGrid();
-    await flashCell(pos.row, pos.col, pos.row === target.row && pos.col === target.col ? '#D5F5E3' : '#EEF6FF');
   }
-
-  await sleep(200);
-
-  if (robot.row === target.row && robot.col === target.col) {
-    playSound('success'); // SOM DE ACERTO
-    setStatus('success', `🎉 Chegou no destino! Parabéns!`);
-    launchConfetti();
-  } else {
-    playSound('error'); // SOM DE ERRO (não chegou no destino)
-    setStatus('error', `❌ Não foi desta vez. Tente ajustar os comandos!`);
-  }
-  finishExec(true);
+  else { playSound('error'); setStatus('error', '❌ Tente de novo!'); }
+  executing = false; setControlsDisabled(false); updateButtons();
 }
 
-function finishExec(success) {
-  executing = false;
-  setControlsDisabled(false);
-  updateButtons();
-}
+function resetAll() { robot = { row: 0, col: 0 }; target = null; commands = []; document.getElementById('target-letter').textContent = '?'; document.getElementById('step-num').textContent = '—'; setStatus('neutral', 'Escolha o destino e programe!'); renderGrid(); renderQueue(); updateButtons(); }
+function setStatus(t, m) { const s = document.getElementById('status-bar'); s.className = 'status-bar ' + t; s.textContent = m; }
+function setControlsDisabled(d) { ['btn-up','btn-down','btn-left','btn-right','btn-undo','btn-clear','btn-exec'].forEach(id => document.getElementById(id).disabled = d); }
+function updateButtons() { document.getElementById('btn-exec').disabled = (commands.length === 0 || !target || executing); }
+function setRandomTarget() { onCellClick(Math.floor(Math.random()*ROWS), Math.floor(Math.random()*COLS)); }
 
-function resetAll() {
-  if (executing) execAbort = true;
-  robot = { row: 0, col: 0 };
-  target = null;
-  commands = [];
-  document.getElementById('target-letter').textContent = '?';
-  document.getElementById('step-num').textContent = '—';
-  setStatus('neutral', 'Tudo reiniciado! Escolha o destino.');
-  renderAll();
-  updateButtons();
-}
-
-function setStatus(type, msg) {
-  const bar = document.getElementById('status-bar');
-  bar.className = 'status-bar ' + type;
-  bar.textContent = msg;
-}
-
-function setControlsDisabled(disabled) {
-  const ids = ['btn-up', 'btn-down', 'btn-left', 'btn-right', 'btn-undo', 'btn-clear', 'btn-exec', 'btn-random'];
-  ids.forEach(id => document.getElementById(id).disabled = disabled);
-}
-
-function updateButtons() {
-  const hasCmds = commands.length > 0;
-  document.getElementById('btn-undo').disabled = executing || !hasCmds;
-  document.getElementById('btn-clear').disabled = executing || !hasCmds;
-  document.getElementById('btn-exec').disabled = executing || !hasCmds || !target;
-}
-
-function updateSpeedLabel() {
-  const val = document.getElementById('speed-slider').value;
-  document.getElementById('speed-label').textContent = SPEED_LABELS[val];
-}
-
-function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
-
-async function flashCell(r, c, color) {
-  const el = document.getElementById(`cell-${r}-${c}`);
-  const oldBg = el.style.background;
-  el.style.background = color;
-  await sleep(150);
-  el.style.background = oldBg;
-}
-
-function toggleAbout() {
-  const content = document.getElementById('about-content');
-  const arrow = document.getElementById('about-arrow');
-  const isHidden = content.classList.toggle('hidden');
-  arrow.textContent = isHidden ? '▼' : '▲';
-}
-
-function launchConfetti() {
-  const wrap = document.getElementById('confetti-wrap');
-  const colors = ['#3A8FE8', '#E8773A', '#9B59B6', '#27AE60', '#F5C842'];
-  for (let i = 0; i < 50; i++) {
-    const p = document.createElement('div');
-    p.className = 'confetti-piece';
-    p.style.left = Math.random() * 100 + 'vw';
-    p.style.background = colors[Math.floor(Math.random() * colors.length)];
-    p.style.transform = `rotate(${Math.random() * 360}deg)`;
-    const duration = 2 + Math.random() * 3;
-    p.style.animationDuration = duration + 's';
-    p.style.animationDelay = Math.random() * 2 + 's';
-    wrap.appendChild(p);
-    setTimeout(() => p.remove(), (duration + 2) * 1000);
-  }
-}
-
-init();
-</script>
-<script>
-function controlarAcesso() {
-    const aviso = document.getElementById('aviso-desktop-somente');
-    const header = document.querySelector('.app-header');
-    const main = document.querySelector('.app-main');
-    
-    // Detecta se é dispositivo móvel (Touch) ou tela pequena
-    const isMobile = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (window.innerWidth <= 1024);
-
-    if (isMobile) {
-        // É CELULAR OU TABLET: Garante que o jogo apareça e o aviso suma
-        aviso.style.setProperty('display', 'none', 'important');
-        if(header) header.style.display = 'flex';
-        if(main) main.style.display = 'flex';
-    } else {
-        // É DESKTOP: Mostra o aviso e esconde o jogo
-        aviso.style.setProperty('display', 'flex', 'important');
-        if(header) header.style.display = 'none';
-        if(main) main.style.display = 'none';
-    }
-}
-
-// Executa ao carregar e ao girar a tela
-window.addEventListener('load', controlarAcesso);
-window.addEventListener('resize', controlarAcesso);
+buildGrid(); renderGrid();
 </script>
 </body>
 </html>
