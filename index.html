@@ -21,7 +21,7 @@
       overflow: hidden; 
     }
 
-    /* 2. TELA DE BLOQUEIO (APARECE NO PC) */
+    /* 2. LÓGICA DE BLOQUEIO VIA CSS (Mais rápido que JS) */
     #pc-blocker {
       position: fixed; inset: 0;
       background: #1a1a2e; color: white;
@@ -29,12 +29,20 @@
       justify-content: center; align-items: center;
       z-index: 9999; text-align: center; padding: 20px;
     }
+
+    #app-content { display: none; height: 100%; flex-direction: column; }
+
+    /* Se for tela pequena (mobile) ou dispositivo com touch (tablet), esconde o bloqueio */
+    @media (max-width: 1024px) {
+      #pc-blocker { display: none; }
+      #app-content { display: flex; }
+    }
+
+    /* Estilos adicionais para o Blocker */
     #pc-blocker h1 { font-family: 'Fredoka One', cursive; margin-bottom: 15px; }
     #pc-blocker p { opacity: 0.8; max-width: 400px; line-height: 1.5; }
 
-    /* 3. APP CONTAINER (SÓ APARECE NO MOBILE) */
-    #app-content { display: none; height: 100%; flex-direction: column; }
-
+    /* 3. APP UI */
     .app-header {
       background: var(--card); padding: 12px;
       display: flex; justify-content: space-between; align-items: center;
@@ -48,7 +56,6 @@
       justify-content: space-around;
     }
 
-    /* GRADE AJUSTADA PARA MOBILE/TABLET */
     .grid {
       display: grid; grid-template-columns: repeat(6, 1fr);
       gap: 4px; background: white; padding: 8px;
@@ -63,13 +70,13 @@
     .cell.robot { background: #EEF6FF; border: 2px solid var(--up-color); font-size: 24px; }
     .cell.target { background: #FFF9D6; border: 2px solid #F5C842; }
 
-    /* CONTROLES */
     .controls { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 450px; margin: 0 auto; }
     .cmd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .btn {
       border: none; border-radius: 15px; padding: 15px;
       color: white; font-family: 'Fredoka One', cursive;
       box-shadow: 0 4px 0 rgba(0,0,0,0.2); font-size: 14px;
+      cursor: pointer;
     }
     .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
     .up { background: var(--up-color); grid-column: 2; }
@@ -94,7 +101,7 @@
   <div id="pc-blocker">
     <div style="font-size: 60px;">🚫</div>
     <h1>Acesso Negado</h1>
-    <p>O <b>Mostrabot</b> foi projetado exclusivamente para uso em <b>Celulares e Tablets</b>.<br><br>Por favor, utilize um dispositivo móvel para continuar.</p>
+    <p>O <b>Mostrabot</b> foi projetado exclusivamente para uso em <b>Celulares e Tablets</b>.<br><br>Abra este link no seu dispositivo móvel para jogar.</p>
   </div>
 
   <!-- CONTEÚDO DO JOGO -->
@@ -107,7 +114,7 @@
     <main class="app-main">
       <div style="display:flex; justify-content: space-between; align-items:center;">
         <div style="font-weight:900">🎯 Alvo: <span id="target-txt" style="color:var(--up-color)">?</span></div>
-        <button onclick="setRandomTarget()" style="padding:5px 10px; border-radius:8px; border:1px solid #ccc; background:#fff; font-weight:bold">🎲 Sortear</button>
+        <button onclick="setRandomTarget()" style="padding:5px 10px; border-radius:8px; border:1px solid #ccc; background:#fff; font-weight:bold; cursor:pointer">🎲 Sortear</button>
       </div>
 
       <div class="grid" id="grid"></div>
@@ -122,26 +129,27 @@
           <button class="btn right" onclick="addCmd('right')">DIR</button>
         </div>
         <button class="btn exec-btn" id="btn-exec" onclick="run()">EXECUTAR MOVIMENTO</button>
-        <button onclick="resetAll()" style="background:none; border:none; color:#777; font-weight:bold; text-decoration:underline">Reiniciar Tudo</button>
+        <button onclick="resetAll()" style="background:none; border:none; color:#777; font-weight:bold; text-decoration:underline; cursor:pointer; margin-top:5px">Reiniciar Tudo</button>
       </div>
     </main>
   </div>
 
 <script>
-  // VERIFICAÇÃO DE DISPOSITIVO (CORE DA RESTRIÇÃO)
-  function checkDevice() {
+  // VERIFICAÇÃO REFORÇADA
+  function init() {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    const isSmallScreen = window.innerWidth <= 1024;
     
-    // Se NÃO for mobile OU NÃO tiver touch (considerando telas grandes de tablet)
-    if (isMobile || (isTouch && window.innerWidth < 1100)) {
-      document.getElementById('pc-blocker').style.display = 'none';
-      document.getElementById('app-content').style.display = 'flex';
-      buildGrid();
+    // Se for desktop (não mobile e tela grande), mantemos o bloqueio
+    if (!isMobile && !isSmallScreen) {
+      console.log("Acesso via Desktop detectado.");
+      return; 
     }
+
+    // Caso contrário, inicializa o jogo
+    buildGrid();
   }
 
-  // LÓGICA DO JOGO
   const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
   let robot = { r: 0, c: 0 }, target = null, cmds = [], running = false;
 
@@ -169,7 +177,13 @@
     setTarget(Math.floor(Math.random()*6), Math.floor(Math.random()*6));
   }
 
-  function addCmd(d) { if(!running && cmds.length < 15) { cmds.push(d); render(); } }
+  function addCmd(d) { 
+    if(!running) { 
+      cmds.push(d); 
+      const s = document.getElementById('status-bar');
+      s.textContent = `Comandos: ${cmds.length} adicionados`;
+    } 
+  }
 
   function render() {
     document.querySelectorAll('.cell').forEach((el, i) => {
@@ -185,27 +199,35 @@
   }
 
   async function run() {
-    if(running || !target || !cmds.length) return;
+    if(running || !target || !cmds.length) {
+      if(!target) alert("Sorteie ou escolha um alvo clicando nas letras!");
+      return;
+    }
     running = true;
     document.getElementById('btn-exec').style.opacity = '0.5';
 
-    for(let i=0; i<cmds.length; i++) {
+    // Copia os comandos e limpa a fila original para o próximo round
+    const queue = [...cmds];
+    cmds = [];
+
+    for(let i=0; i<queue.length; i++) {
       document.getElementById('step-info').textContent = `Passo: ${i+1}`;
-      const move = { up: [-1,0], down: [1,0], left: [0,-1], right: [0,1] }[cmds[i]];
+      const move = { up: [-1,0], down: [1,0], left: [0,-1], right: [0,1] }[queue[i]];
       let nR = robot.r + move[0], nC = robot.c + move[1];
 
       if(nR < 0 || nR > 5 || nC < 0 || nC > 5) {
-        setStatus("💥 Bateu na parede!", "#ff0000"); break;
+        setStatus("💥 Bateu na parede!", "#ff0000"); 
+        break;
       }
       robot.r = nR; robot.c = nC;
       render();
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 400));
     }
 
     if(robot.r === target.r && robot.c === target.c) {
-      setStatus("🎉 CHEGOU!", "#27AE60");
+      setStatus("🎉 CHEGOU AO ALVO!", "#27AE60");
     } else {
-      setStatus("❌ Tente de novo!", "#E8773A");
+      setStatus("❌ Parou no lugar errado!", "#E8773A");
     }
     running = false;
     document.getElementById('btn-exec').style.opacity = '1';
@@ -224,8 +246,7 @@
     render();
   }
 
-  // Inicia verificação
-  window.onload = checkDevice;
+  window.onload = init;
 </script>
 </body>
 </html>
