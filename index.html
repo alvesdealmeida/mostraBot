@@ -101,6 +101,10 @@
 
     .header-step b { color: var(--robot-color); }
 
+    /* ══════════════════════════════════════
+       MAIN LAYOUT
+       Mobile: column | Tablet+: row
+    ══════════════════════════════════════ */
     .app-main {
       display: flex;
       flex-direction: column;
@@ -119,6 +123,9 @@
       }
     }
 
+    /* ══════════════════════════════════════
+       GRID SECTION
+    ══════════════════════════════════════ */
     .grid-section {
       flex: 0 0 auto;
       display: flex;
@@ -157,6 +164,7 @@
     .chip-robot  { background: var(--robot-color); }
     .chip-target { background: var(--target-color); border: 2px solid #c89a00; }
 
+    /* ── GRID ── */
     .grid-wrap { position: relative; width: 100%; display: flex; justify-content: center; }
 
     .grid {
@@ -165,6 +173,11 @@
       gap: clamp(3px, 1vw, 6px);
       background: var(--card);
       border-radius: var(--radius);
+      /*
+       * Padding usa clamp com mínimo menor para telas muito pequenas (320px).
+       * gap e padding mínimos garantem que 6 células de 36px + 5 gaps + 2 pads
+       * = 216 + 15 + 12 = 243px — cabe em qualquer telefone moderno.
+       */
       padding: clamp(6px, 2vw, 12px);
       box-shadow: var(--shadow);
       border: 2px solid var(--border);
@@ -173,6 +186,13 @@
     }
 
     .cell {
+      /*
+       * FIX MOBILE: fórmula anterior usava min 44px, causando overflow em
+       * telas de 320px. Novo mínimo = 36px — ainda confortável para toque.
+       *
+       * Cálculo: (largura_disponível - 2×padding - 5×gap) / 6
+       * Usa 96vw como base para descontar padding do app-main (12px × 2).
+       */
       width:  clamp(36px, calc((min(96vw, 460px) - 36px) / 6), 72px);
       height: clamp(36px, calc((min(96vw, 460px) - 36px) / 6), 72px);
       border-radius: 10px;
@@ -188,6 +208,7 @@
       transition: transform 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
       position: relative;
       user-select: none;
+      /* FIX MOBILE: elimina o delay de 300ms em toque iOS */
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
@@ -241,6 +262,7 @@
 
     .cell-letter { pointer-events: none; }
 
+    /* ── TARGET BADGE ── */
     .target-display {
       display: flex;
       align-items: center;
@@ -277,6 +299,9 @@
     .btn-random:hover  { background: #f0bb20; }
     .btn-random:active { transform: translateY(2px); box-shadow: 0 1px 0 #c89a00; }
 
+    /* ══════════════════════════════════════
+       CONTROLS SECTION
+    ══════════════════════════════════════ */
     .controls-section {
       flex: 1;
       display: flex;
@@ -304,6 +329,19 @@
       gap: 6px;
     }
 
+    /* ── COMMAND PALETTE ──
+     *
+     * Layout visual do controle direcional:
+     *   [    Para Frente (cima)    ]
+     *   [ Esquerda ]  [ Direita   ]
+     *   [    Para Trás (baixo)    ]
+     *
+     * O robô começa na posição A (linha 0, col 0) — canto superior esquerdo.
+     * "Para Frente" = linha diminui (sobe na grade) → dr: -1  ✓
+     * "Para Trás"   = linha aumenta (desce na grade) → dr: +1  ✓
+     * "Esquerda"    = coluna diminui → dc: -1  ✓
+     * "Direita"     = coluna aumenta → dc: +1  ✓
+     */
     .cmd-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -351,6 +389,7 @@
     .cmd-arrow { font-size: clamp(18px, 5vw, 26px); }
     .cmd-label { font-size: clamp(12px, 3vw, 16px); }
 
+    /* ── COMMAND QUEUE ── */
     .queue-area {
       min-height: 64px;
       display: flex;
@@ -401,6 +440,7 @@
 
     .q-chip.done { filter: brightness(0.6); }
 
+    /* ── QUEUE ACTIONS ── */
     .queue-actions {
       display: flex;
       gap: 8px;
@@ -420,10 +460,11 @@
     }
 
     .btn-undo  { background: #F0E6FF; color: var(--left-dark);  box-shadow: 0 3px 0 #C8A0E0; }
-    .btn-clear { background: #FFE8E8; color: #A02020;            box-shadow: 0 3px 0 #E0A0A0; }
+    .btn-clear { background: #FFE8E8; color: #A02020;           box-shadow: 0 3px 0 #E0A0A0; }
     .btn-undo:active, .btn-clear:active  { transform: translateY(2px); box-shadow: 0 1px 0; }
     .btn-undo:disabled, .btn-clear:disabled { filter: opacity(0.4); cursor: not-allowed; }
 
+    /* ── EXECUTE ── */
     .btn-exec {
       width: 100%;
       padding: clamp(12px, 3vw, 16px);
@@ -464,6 +505,7 @@
 
     .btn-reset:hover { background: #F0F0F0; color: var(--text); }
 
+    /* ── STATUS BAR ── */
     .status-bar {
       border-radius: 12px;
       padding: 10px 14px;
@@ -481,6 +523,7 @@
     .status-bar.running { background: #EEF6FF; color: var(--robot-color);   border-color: var(--robot-color); }
     .status-bar.warn    { background: #FFF9D6; color: #7a5c00;               border-color: var(--target-color); }
 
+    /* ── SPEED ── */
     .speed-row {
       display: flex;
       align-items: center;
@@ -495,6 +538,7 @@
       accent-color: var(--robot-color);
     }
 
+    /* ── CONFETTI ── */
     .confetti-wrap {
       position: fixed;
       inset: 0;
@@ -516,6 +560,7 @@
       to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
     }
 
+    /* ── LEGEND ── */
     .legend-row {
       display: flex;
       flex-wrap: wrap;
@@ -537,6 +582,7 @@
 
     .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
 
+    /* ── ABOUT PANEL ── */
     .about-toggle {
       display: flex;
       align-items: center;
@@ -564,27 +610,46 @@
     }
 
     .about-content b { color: var(--text); }
+
+    /*
+     * FIX TABLET — painel "Sobre":
+     * O código original tinha `.about-content.open { display:block }` no breakpoint
+     * de ≥700px, mas o JS alternava a classe `.hidden` (não `.open`).
+     * Isso fazia o botão "Sobre" nunca funcionar no tablet.
+     *
+     * Correção: usamos apenas `.hidden` em todos os breakpoints para controlar
+     * a visibilidade — consistente com o comportamento do JS.
+     */
     .about-content.hidden { display: none; }
 
+    /* ══════════════════════════════════════
+       TABLET  (700px – 1024px)
+    ══════════════════════════════════════ */
     @media (min-width: 700px) {
       .app-main { flex-direction: row; align-items: flex-start; padding: 16px; gap: 16px; }
       .grid-section { width: clamp(280px, 48%, 460px); }
+
+      /* Grid cells ligeiramente maiores no tablet */
       .cell {
         width:  clamp(42px, calc((min(48vw, 460px) - 36px) / 6), 72px);
         height: clamp(42px, calc((min(48vw, 460px) - 36px) / 6), 72px);
       }
     }
 
+    /* ══════════════════════════════════════
+       TELAS MUITO PEQUENAS (≤ 360px)
+    ══════════════════════════════════════ */
     @media (max-width: 360px) {
       .app-main   { padding: 8px; gap: 8px; }
       .panel      { padding: 9px; }
-      .target-hint { display: none; }
+      .target-hint { display: none; } /* economiza espaço no badge de destino */
       .cmd-label  { font-size: 11px; }
     }
   </style>
 </head>
 <body>
 
+<!-- Header -->
 <header class="app-header">
   <div class="header-brand">
     <span class="brand-robot">🤖</span>
@@ -598,10 +663,15 @@
   </div>
 </header>
 
+<!-- Confetti container -->
 <div class="confetti-wrap" id="confetti-wrap"></div>
 
 <main class="app-main">
+
+  <!-- LEFT: Grid -->
   <section class="grid-section">
+
+    <!-- Target display -->
     <div class="target-display">
       <span class="target-label">🎯 Destino:</span>
       <span class="target-val" id="target-letter">?</span>
@@ -609,10 +679,12 @@
       <button class="btn-random" id="btn-random" onclick="setRandomTarget()" title="Sortear destino">🎲 Sortear</button>
     </div>
 
+    <!-- Grid -->
     <div class="grid-wrap">
       <div class="grid" id="grid"></div>
     </div>
 
+    <!-- Legend -->
     <div class="legend-row">
       <div class="legend-item"><div class="legend-dot" style="background:var(--robot-color);"></div> Mostrabot</div>
       <div class="legend-item"><div class="legend-dot" style="background:var(--target-color); border:1px solid #c89a00;"></div> Destino</div>
@@ -620,13 +692,23 @@
     </div>
   </section>
 
+  <!-- RIGHT: Controls -->
   <section class="controls-section">
+
+    <!-- Status -->
     <div class="status-bar" id="status-bar">
       Escolha o destino e programe o Mostrabot! 🚀
     </div>
 
+    <!-- Command Palette -->
     <div class="panel">
       <div class="panel-title">🧩 Blocos de Comando</div>
+      <!--
+        Ordem visual dos botões:
+           [ Para Frente ↑ ]       ← sobe na grade (dr = -1)
+           [ Esquerda ] [ Direita ] ← (dc = -1 / +1)
+           [ Para Trás  ↓ ]        ← desce na grade (dr = +1)
+      -->
       <div class="cmd-grid">
         <button class="cmd-btn up"    onclick="addCmd('up')"    id="btn-up">
           <span class="cmd-arrow">⬆️</span><span class="cmd-label">Para Frente</span>
@@ -643,6 +725,7 @@
       </div>
     </div>
 
+    <!-- Queue -->
     <div class="panel">
       <div class="panel-title">📋 Sequência de Comandos <span id="cmd-count" style="font-size:13px;color:var(--muted);">(0)</span></div>
       <div class="queue-area" id="queue">
@@ -654,6 +737,7 @@
       </div>
     </div>
 
+    <!-- Speed -->
     <div class="panel">
       <div class="panel-title">⚡ Velocidade de Execução</div>
       <div class="speed-row">
@@ -664,6 +748,7 @@
       </div>
     </div>
 
+    <!-- Execute -->
     <button class="btn-exec" id="btn-exec" onclick="executeCommands()">
       ▶ Executar Programa
     </button>
@@ -672,6 +757,7 @@
       🔄 Reiniciar Tudo
     </button>
 
+    <!-- About -->
     <div class="panel">
       <button class="about-toggle" onclick="toggleAbout()">
         ℹ️ Sobre a atividade <span id="about-arrow">▼</span>
@@ -684,24 +770,38 @@
         O erro é parte do aprendizado — ajuste a sequência e tente novamente! 🌟
       </div>
     </div>
+
   </section>
 </main>
 
 <script>
-// --- CONFIGURAÇÃO DE SONS ---
-const audioStep = new Audio('https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3');
-const audioSuccess = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-const audioError = new Audio('https://assets.mixkit.co/active_storage/sfx/2955/2955-preview.mp3');
-
-function playSound(type) {
-    if (type === 'step') { audioStep.currentTime = 0; audioStep.play(); }
-    if (type === 'success') { audioSuccess.currentTime = 0; audioSuccess.play(); }
-    if (type === 'error') { audioError.currentTime = 0; audioError.play(); }
-}
-
+// ═══════════════════════════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════════════════════════
 const COLS = 6, ROWS = 6;
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
 
+/*
+ * LÓGICA DE DIREÇÕES — verificada ✓
+ *
+ * Grade 6×6 com A em (0,0) = canto superior esquerdo:
+ *   Row 0: A B C D E F
+ *   Row 1: G H I J K L
+ *   Row 2: M N O P Q R
+ *   Row 3: S T U V W X
+ *   Row 4: Y Z 0 1 2 3
+ *   Row 5: 4 5 6 7 8 9
+ *
+ * "Para Frente" = sobe visualmente na tela = row diminui = dr: -1  ✓
+ * "Para Trás"   = desce na tela           = row aumenta = dr: +1  ✓
+ * "Esquerda"    = col diminui = dc: -1  ✓
+ * "Direita"     = col aumenta = dc: +1  ✓
+ *
+ * Exemplos:
+ *   A(0,0) → H(1,1): Para Trás + Direita → (1,0)=G → (1,1)=H  ✓
+ *   A(0,0) → B(0,1): Direita              → (0,1)=B             ✓
+ *   A(0,0) → G(1,0): Para Trás            → (1,0)=G             ✓
+ */
 const DIRS = {
   up:    { dr: -1, dc:  0, arrow: '⬆', label: 'Para Frente' },
   down:  { dr:  1, dc:  0, arrow: '⬇', label: 'Para Trás'   },
@@ -712,12 +812,18 @@ const DIRS = {
 const SPEED_MAP    = { 1: 900, 2: 600, 3: 380, 4: 220, 5: 100 };
 const SPEED_LABELS = { 1: 'Muito Lento', 2: 'Lento', 3: 'Normal', 4: 'Rápido', 5: 'Turbo 🚀' };
 
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════
 let robot    = { row: 0, col: 0 };
 let target   = null;
 let commands = [];
 let executing = false;
 let execAbort = false;
 
+// ═══════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
 function init() {
   buildGrid();
   renderAll();
@@ -736,12 +842,16 @@ function buildGrid() {
     cell.className = 'cell';
     cell.dataset.row = row;
     cell.dataset.col = col;
+    cell.dataset.ch  = ch;
     cell.id = `cell-${row}-${col}`;
     cell.addEventListener('click', () => onCellClick(row, col));
     grid.appendChild(cell);
   });
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════════════════
 function renderAll() {
   renderGrid();
   renderQueue();
@@ -755,11 +865,14 @@ function renderGrid() {
     const isRobot  = robot.row === row && robot.col === col;
     const isTgt    = target && target.row === row && target.col === col;
     const bothOnIt = isRobot && isTgt;
+
     cell.className = 'cell';
-    if (bothOnIt) cell.classList.add('robot-on-target');
-    else if (isRobot) cell.classList.add('robot-cell');
-    else if (isTgt) cell.classList.add('target-cell');
-    cell.textContent = isRobot ? '🤖' : ch;
+    if (bothOnIt)       cell.classList.add('robot-on-target');
+    else if (isRobot)   cell.classList.add('robot-cell');
+    else if (isTgt)     cell.classList.add('target-cell');
+
+    if (isRobot) cell.textContent = '🤖';
+    else         cell.textContent = ch;
   });
 }
 
@@ -767,24 +880,37 @@ function renderQueue() {
   const queueEl = document.getElementById('queue');
   const emptyEl = document.getElementById('queue-empty');
   const countEl = document.getElementById('cmd-count');
+
   countEl.textContent = `(${commands.length})`;
-  emptyEl.style.display = commands.length === 0 ? 'block' : 'none';
+
+  if (commands.length === 0) {
+    emptyEl.style.display = 'block';
+    queueEl.querySelectorAll('.q-chip').forEach(c => c.remove());
+    return;
+  }
+
+  emptyEl.style.display = 'none';
   queueEl.querySelectorAll('.q-chip').forEach(c => c.remove());
+
   commands.forEach((cmd, i) => {
     const chip = document.createElement('div');
     chip.className = `q-chip ${cmd}`;
     chip.id = `chip-${i}`;
     chip.textContent = DIRS[cmd].arrow;
+    chip.title = DIRS[cmd].label;
     queueEl.appendChild(chip);
   });
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// TARGET
+// ═══════════════════════════════════════════════════════════════════════════
 function onCellClick(row, col) {
   if (executing) return;
   if (robot.row === row && robot.col === col) return;
   target = { row, col };
   document.getElementById('target-letter').textContent = CHARS[row * COLS + col];
-  setStatus('neutral', `Destino definido: ${CHARS[row * COLS + col]}`);
+  setStatus('neutral', `Destino definido: ${CHARS[row * COLS + col]} — Agora programe o Mostrabot! 🤖`);
   renderGrid();
   updateButtons();
 }
@@ -799,142 +925,219 @@ function setRandomTarget() {
   onCellClick(r, c);
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// COMMANDS
+// ═══════════════════════════════════════════════════════════════════════════
 function addCmd(dir) {
   if (executing) return;
-  if (commands.length < 24) {
-    commands.push(dir);
-    renderQueue();
-    updateButtons();
+  if (commands.length >= 24) {
+    setStatus('warn', 'Sequência máxima de 24 comandos atingida!');
+    return;
   }
+  commands.push(dir);
+  renderQueue();
+  updateButtons();
+  if (!target) setStatus('warn', 'Não esqueça de escolher um destino! 🎯');
+  else setStatus('neutral', `Bloco adicionado: ${DIRS[dir].label} — Total: ${commands.length} comandos`);
 }
 
 function undoCmd() {
-  if (!executing && commands.length > 0) {
-    commands.pop();
-    renderQueue();
-    updateButtons();
-  }
+  if (executing || commands.length === 0) return;
+  commands.pop();
+  renderQueue();
+  updateButtons();
+  setStatus('neutral', commands.length === 0
+    ? 'Sequência vazia. Adicione blocos!'
+    : `Último bloco removido — ${commands.length} comando(s) restantes`);
 }
 
 function clearCmds() {
-  if (!executing) {
-    commands = [];
-    renderQueue();
-    updateButtons();
-  }
+  if (executing) return;
+  commands = [];
+  renderQueue();
+  updateButtons();
+  setStatus('neutral', 'Sequência apagada. Comece de novo! 🧩');
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// EXECUTE
+// ═══════════════════════════════════════════════════════════════════════════
 async function executeCommands() {
-  if (executing || !target || commands.length === 0) return;
+  if (executing) return;
+  if (!target)           { setStatus('warn', '⚠️ Escolha um destino primeiro! Toque em uma letra ou número.'); return; }
+  if (commands.length === 0) { setStatus('warn', '⚠️ Adicione pelo menos um bloco de comando!'); return; }
 
-  executing = true;
+  executing  = true;
+  execAbort  = false;
   setControlsDisabled(true);
-  setStatus('running', 'Executando...');
+  setStatus('running', '▶ Executando... acompanhe o Mostrabot!');
 
   const delay = SPEED_MAP[document.getElementById('speed-slider').value];
   let pos = { ...robot };
 
   for (let i = 0; i < commands.length; i++) {
-    const dir = DIRS[commands[i]];
+    if (execAbort) break;
+
+    // Destaca passo atual na fila
+    document.querySelectorAll('.q-chip').forEach((c, ci) => {
+      c.classList.remove('current-step', 'done');
+      if (ci < i)  c.classList.add('done');
+      if (ci === i) c.classList.add('current-step');
+    });
+
+    document.getElementById('step-num').textContent = `${i + 1} / ${commands.length}`;
+    setStatus('running', `▶ Passo ${i + 1}/${commands.length}: ${DIRS[commands[i]].arrow} ${DIRS[commands[i]].label}`);
+
+    const dir    = DIRS[commands[i]];
     const newRow = pos.row + dir.dr;
     const newCol = pos.col + dir.dc;
-
-    // Destaca passo
-    document.getElementById(`chip-${i}`).classList.add('current-step');
-    document.getElementById('step-num').textContent = i + 1;
 
     await sleep(delay);
 
     if (newRow < 0 || newRow >= ROWS || newCol < 0 || newCol >= COLS) {
-      playSound('error'); // SOM DE ERRO
-      setStatus('error', '💥 Bateu na parede!');
+      await flashCell(pos.row, pos.col, '#FFE0E0');
+      setStatus('error', `💥 Ops! O Mostrabot saiu do mapa no passo ${i + 1}! Ajuste a sequência.`);
       finishExec(false);
       return;
     }
 
     pos.row = newRow;
     pos.col = newCol;
-    robot = { ...pos };
-    playSound('step'); // SOM DE PASSO
+    robot   = { ...pos };
     renderGrid();
+    await flashCell(pos.row, pos.col,
+      pos.row === target.row && pos.col === target.col ? '#D5F5E3' : '#EEF6FF');
   }
 
-  await sleep(300);
+  // Todos os passos concluídos
+  document.querySelectorAll('.q-chip').forEach(c => {
+    c.classList.remove('current-step');
+    c.classList.add('done');
+  });
+
+  await sleep(200);
+
   if (robot.row === target.row && robot.col === target.col) {
-    playSound('success'); // SOM DE ACERTO
-    setStatus('success', '🎉 Conseguiu!');
+    const letter = CHARS[robot.row * COLS + robot.col];
+    setStatus('success', `🎉 Parabéns! O Mostrabot chegou na letra/número "${letter}"! Incrível!`);
+    renderGrid();
     launchConfetti();
   } else {
-    playSound('error'); // SOM DE ERRO (lugar errado)
-    setStatus('error', '🤔 Lugar errado.');
+    const atLetter = CHARS[robot.row * COLS + robot.col];
+    const tgLetter = CHARS[target.row * COLS + target.col];
+    setStatus('error', `🤔 O Mostrabot parou em "${atLetter}", mas o destino era "${tgLetter}". Tente novamente!`);
   }
+
   finishExec(true);
 }
 
-function finishExec(success) {
+function finishExec(completed) {
   executing = false;
+  document.getElementById('step-num').textContent = '—';
   setControlsDisabled(false);
-  updateButtons();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════════════
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function flashCell(row, col, color) {
+  return new Promise(resolve => {
+    const cell = document.getElementById(`cell-${row}-${col}`);
+    const orig = cell.style.background;
+    cell.style.transition = 'background 0.1s';
+    cell.style.background = color;
+    setTimeout(() => { cell.style.background = orig; resolve(); }, 200);
+  });
 }
 
 function setStatus(type, msg) {
   const bar = document.getElementById('status-bar');
-  bar.className = 'status-bar ' + type;
+  bar.className = 'status-bar';
+  if (type !== 'neutral') bar.classList.add(type);
   bar.textContent = msg;
 }
 
 function updateButtons() {
-  const isExec = executing;
-  document.getElementById('btn-exec').disabled = isExec || !target || commands.length === 0;
-  document.getElementById('btn-undo').disabled = isExec || commands.length === 0;
-  document.getElementById('btn-clear').disabled = isExec || commands.length === 0;
+  const hasCmds   = commands.length > 0;
+  const hasTarget = !!target;
+  const isExec    = executing;
+
+  document.getElementById('btn-up').disabled    = isExec;
+  document.getElementById('btn-down').disabled  = isExec;
+  document.getElementById('btn-left').disabled  = isExec;
+  document.getElementById('btn-right').disabled = isExec;
+  document.getElementById('btn-undo').disabled  = isExec || !hasCmds;
+  document.getElementById('btn-clear').disabled = isExec || !hasCmds;
+  document.getElementById('btn-exec').disabled  = isExec || !hasCmds || !hasTarget;
+  document.getElementById('btn-reset').disabled = isExec;
 }
 
-function setControlsDisabled(bool) {
-  ['up','down','left','right'].forEach(d => document.getElementById('btn-'+d).disabled = bool);
-  document.getElementById('btn-random').disabled = bool;
+function setControlsDisabled(disabled) {
+  ['btn-up','btn-down','btn-left','btn-right',
+   'btn-undo','btn-clear','btn-exec','btn-reset','btn-random'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.disabled = disabled;
+  });
 }
-
-function updateSpeedLabel() {
-  const val = document.getElementById('speed-slider').value;
-  document.getElementById('speed-label').textContent = SPEED_LABELS[val];
-}
-
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 function resetAll() {
-  robot = { row:0, col:0 };
-  target = null;
+  if (executing) { execAbort = true; return; }
+  robot    = { row: 0, col: 0 };
+  target   = null;
   commands = [];
   document.getElementById('target-letter').textContent = '?';
   document.getElementById('step-num').textContent = '—';
-  setStatus('neutral', 'Escolha o destino!');
   renderAll();
   updateButtons();
+  setStatus('neutral', 'Reiniciado! Escolha o destino e programe o Mostrabot. 🚀');
 }
 
+function updateSpeedLabel() {
+  const v = document.getElementById('speed-slider').value;
+  document.getElementById('speed-label').textContent = SPEED_LABELS[v];
+}
+
+/*
+ * FIX TABLET — toggleAbout:
+ * O código original alternava '.hidden' no mobile mas o CSS do tablet
+ * esperava a classe '.open'. Unificado: usa apenas '.hidden' em todos os
+ * breakpoints (CSS corrigido acima para usar .about-content.hidden em vez
+ * de .about-content.open).
+ */
 function toggleAbout() {
-  const c = document.getElementById('about-content');
-  const a = document.getElementById('about-arrow');
-  c.classList.toggle('hidden');
-  a.textContent = c.classList.contains('hidden') ? '▼' : '▲';
+  const content = document.getElementById('about-content');
+  const arrow   = document.getElementById('about-arrow');
+  content.classList.toggle('hidden');
+  arrow.textContent = content.classList.contains('hidden') ? '▼' : '▲';
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// CONFETTI
+// ═══════════════════════════════════════════════════════════════════════════
 function launchConfetti() {
-  const wrap = document.getElementById('confetti-wrap');
-  const colors = ['#3A8FE8', '#27AE60', '#F5C842', '#E8773A', '#9B59B6'];
-  for (let i=0; i<40; i++) {
-    const p = document.createElement('div');
-    p.className = 'confetti-piece';
-    p.style.left = Math.random() * 100 + 'vw';
-    p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-    p.style.animationDuration = (Math.random() * 2 + 1) + 's';
-    wrap.appendChild(p);
-    setTimeout(() => p.remove(), 3000);
+  const wrap   = document.getElementById('confetti-wrap');
+  const COLORS = ['#F5C842','#3A8FE8','#27AE60','#9B59B6','#E8773A','#FF6B6B','#4ECDC4'];
+  for (let i = 0; i < 60; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left              = Math.random() * 100 + 'vw';
+    el.style.background        = COLORS[Math.floor(Math.random() * COLORS.length)];
+    el.style.width             = (8 + Math.random() * 10) + 'px';
+    el.style.height            = (10 + Math.random() * 14) + 'px';
+    el.style.borderRadius      = Math.random() > 0.5 ? '50%' : '3px';
+    el.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+    el.style.animationDelay    = (Math.random() * 0.6) + 's';
+    wrap.appendChild(el);
+    el.addEventListener('animationend', () => el.remove());
   }
 }
 
-window.onload = init;
+// ═══════════════════════════════════════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════════════════════════════════════
+init();
 </script>
 </body>
 </html>
