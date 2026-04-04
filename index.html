@@ -2,215 +2,1032 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Mostrabot — Mobile Only</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet" />
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Mostrabot — Primeiros Passos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --up-color: #3A8FE8; --down-color: #E8773A; --left-color: #9B59B6; --right-color: #27AE60;
-      --bg: #FFF8F0; --card: #FFFFFF; --text: #1A1A2E; --radius: 18px;
+      --up-color:    #3A8FE8;
+      --up-light:    #D6EAFC;
+      --up-dark:     #1A5FAD;
+      --down-color:  #E8773A;
+      --down-light:  #FCE8D6;
+      --down-dark:   #AD4E1A;
+      --left-color:  #9B59B6;
+      --left-light:  #EDD9FA;
+      --left-dark:   #6B2D8A;
+      --right-color: #27AE60;
+      --right-light: #D5F5E3;
+      --right-dark:  #1A7A42;
+      --target-color: #F5C842;
+      --target-glow:  rgba(245,200,66,0.4);
+      --robot-color:  #3A8FE8;
+      --success-color:#27AE60;
+      --error-color:  #E84040;
+      --bg:            #FFF8F0;
+      --card:          #FFFFFF;
+      --border:        #E8E0D8;
+      --text:          #1A1A2E;
+      --muted:         #7A7A8A;
+      --grid-cell:     #FFFFFF;
+      --grid-border:   #D8D0C8;
+      --radius:        14px;
+      --shadow:        0 3px 14px rgba(0,0,0,0.09);
     }
 
-    body, html { height: 100%; background: var(--bg); font-family: 'Nunito', sans-serif; overflow: hidden; }
+    html, body { height: 100%; }
 
-    /* BLOQUEIO PARA DESKTOP */
-    #pc-blocker {
-      position: fixed; inset: 0; background: #1a1a2e; color: white;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      z-index: 9999; text-align: center; padding: 20px;
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 10% 10%, rgba(58,143,232,0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(39,174,96,0.08) 0%, transparent 40%);
+      color: var(--text);
+      min-height: 100%;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
     }
-    #app-content { display: none; height: 100%; flex-direction: column; }
 
-    @media (max-width: 1024px) {
-      #pc-blocker { display: none; }
-      #app-content { display: flex; }
+    /* ── HEADER ── */
+    .app-header {
+      background: var(--card);
+      border-bottom: 2px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     }
 
-    /* INTERFACE */
-    .app-header { background: var(--card); padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; }
-    .brand { font-family: 'Fredoka One', cursive; color: var(--up-color); font-size: 20px; }
-    .app-main { flex: 1; padding: 15px; display: flex; flex-direction: column; justify-content: space-around; }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-robot { font-size: 28px; line-height: 1; }
+    .brand-text  { line-height: 1.1; }
+
+    .brand-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(16px, 4vw, 22px);
+      color: var(--robot-color);
+    }
+
+    .brand-sub {
+      font-size: clamp(9px, 2vw, 11px);
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .header-step {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(13px, 3vw, 16px);
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .header-step b { color: var(--robot-color); }
+
+    /* ══════════════════════════════════════
+        MAIN LAYOUT
+        Mobile: column | Tablet+: row
+     ══════════════════════════════════════ */
+    .app-main {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 12px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 700px) {
+      .app-main {
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 16px;
+        gap: 16px;
+      }
+    }
+
+    /* ══════════════════════════════════════
+        GRID SECTION
+     ══════════════════════════════════════ */
+    .grid-section {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      width: 100%;
+    }
+
+    @media (min-width: 700px) {
+      .grid-section { width: clamp(280px, 48%, 460px); }
+    }
+
+    .grid-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .info-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: clamp(11px, 2.5vw, 13px);
+      font-weight: 700;
+    }
+
+    .chip-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .chip-robot  { background: var(--robot-color); }
+    .chip-target { background: var(--target-color); border: 2px solid #c89a00; }
+
+    /* ── GRID ── */
+    .grid-wrap { position: relative; width: 100%; display: flex; justify-content: center; }
 
     .grid {
-      display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; background: white; padding: 8px;
-      border-radius: var(--radius); border: 2px solid #ddd; width: 100%; max-width: 400px; aspect-ratio: 1/1; margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: clamp(3px, 1vw, 6px);
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: clamp(6px, 2vw, 12px);
+      box-shadow: var(--shadow);
+      border: 2px solid var(--border);
+      width: 100%;
+      max-width: 460px;
     }
+
     .cell {
-      background: #f9f9f9; border: 1px solid #eee; border-radius: 6px;
-      display: flex; align-items: center; justify-content: center; font-family: 'Fredoka One', cursive; font-size: 14px;
+      width:  clamp(36px, calc((min(96vw, 460px) - 36px) / 6), 72px);
+      height: clamp(36px, calc((min(96vw, 460px) - 36px) / 6), 72px);
+      border-radius: 10px;
+      background: var(--grid-cell);
+      border: 2px solid var(--grid-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(13px, 3.5vw, 24px);
+      color: var(--text);
+      cursor: pointer;
+      transition: transform 0.15s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+      user-select: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
-    .cell.robot { background: #EEF6FF; border: 2px solid var(--up-color); font-size: 24px; }
-    .cell.target { background: #FFF9D6; border: 2px solid #F5C842; }
 
-    /* BOTÕES COM SETAS */
-    .controls { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 400px; margin: 0 auto; }
-    .cmd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .btn {
-      border: none; border-radius: 15px; padding: 12px; color: white;
-      font-family: 'Fredoka One', cursive; font-size: 14px; cursor: pointer;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    .cell:hover:not(.robot-cell):not(.target-cell) {
+      background: #F0F6FF;
+      border-color: var(--robot-color);
+      transform: scale(1.06);
     }
-    .btn span { font-size: 20px; margin-bottom: 2px; }
-    .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
-    
-    .up { background: var(--up-color); grid-column: 2; }
-    .left { background: var(--left-color); grid-column: 1; }
-    .down { background: var(--down-color); grid-column: 2; }
-    .right { background: var(--right-color); grid-column: 3; }
 
-    .exec-btn { background: #27AE60; padding: 15px; font-size: 18px; box-shadow: 0 6px 0 #1A7A42; margin-top: 5px; }
-    .status { background: #eee; padding: 8px; border-radius: 10px; text-align: center; font-weight: 900; font-size: 14px; }
+    .cell.target-cell {
+      background: #FFF9D6;
+      border-color: var(--target-color);
+      border-width: 3px;
+      box-shadow: 0 0 0 3px var(--target-glow);
+      animation: pulse-target 1.8s ease-in-out infinite;
+      color: #7a5c00;
+    }
+
+    @keyframes pulse-target {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(245,200,66,0.4); }
+      50%       { box-shadow: 0 0 0 7px rgba(245,200,66,0.1); }
+    }
+
+    .cell.robot-cell {
+      background: #EEF6FF;
+      border-color: var(--robot-color);
+      border-width: 3px;
+      box-shadow: 0 0 0 3px rgba(58,143,232,0.25);
+      font-size: clamp(18px, 5vw, 32px);
+    }
+
+    .cell.robot-on-target {
+      background: #FFFDE6;
+      border-color: var(--target-color);
+      border-width: 3px;
+      box-shadow: 0 0 0 5px rgba(245,200,66,0.35);
+      animation: pulse-win 0.6s ease-in-out infinite alternate;
+      font-size: clamp(18px, 5vw, 32px);
+    }
+
+    @keyframes pulse-win {
+      from { transform: scale(1); }
+      to   { transform: scale(1.08); }
+    }
+
+    .cell.active-step {
+      outline: 3px solid #FF6B35;
+      outline-offset: 1px;
+    }
+
+    .cell-letter { pointer-events: none; }
+
+    /* ── TARGET BADGE ── */
+    .target-display {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card);
+      border: 2px solid var(--target-color);
+      border-radius: 14px;
+      padding: 8px 16px;
+      font-family: 'Fredoka One', cursive;
+      width: 100%;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(245,200,66,0.2);
+      flex-wrap: wrap;
+    }
+
+    .target-label { font-size: 13px; color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 700; }
+    .target-val   { font-size: 28px; color: #7a5c00; }
+    .target-hint  { font-size: 12px; color: var(--muted); font-family: 'Nunito', sans-serif; }
+
+    .btn-random {
+      background: var(--target-color);
+      border: none;
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 13px;
+      color: #5a3c00;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      box-shadow: 0 3px 0 #c89a00;
+      touch-action: manipulation;
+    }
+
+    .btn-random:hover  { background: #f0bb20; }
+    .btn-random:active { transform: translateY(2px); box-shadow: 0 1px 0 #c89a00; }
+
+    /* ══════════════════════════════════════
+        CONTROLS SECTION
+     ══════════════════════════════════════ */
+    .controls-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .panel {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+      padding: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 15px;
+      color: var(--muted);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto;
+      gap: 8px;
+    }
+
+    .cmd-btn {
+      border: none;
+      border-radius: 14px;
+      padding: clamp(10px, 3vw, 16px) 8px;
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(14px, 3.5vw, 18px);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.1s, box-shadow 0.1s, filter 0.15s;
+      touch-action: manipulation;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cmd-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background 0.15s;
+    }
+
+    .cmd-btn:active::after { background: rgba(255,255,255,0.25); }
+    .cmd-btn:active { transform: translateY(3px); }
+
+    .cmd-btn.up    { background: var(--up-color);    color: #fff; box-shadow: 0 5px 0 var(--up-dark);    grid-column: 1 / -1; }
+    .cmd-btn.down  { background: var(--down-color);  color: #fff; box-shadow: 0 5px 0 var(--down-dark);  grid-column: 1 / -1; }
+    .cmd-btn.left  { background: var(--left-color);  color: #fff; box-shadow: 0 5px 0 var(--left-dark);  }
+    .cmd-btn.right { background: var(--right-color); color: #fff; box-shadow: 0 5px 0 var(--right-dark); }
+
+    .cmd-btn:disabled { filter: opacity(0.45) grayscale(0.4); cursor: not-allowed; }
+    .cmd-btn:disabled:active { transform: none; }
+
+    .cmd-arrow { font-size: clamp(18px, 5vw, 26px); }
+    .cmd-label { font-size: clamp(12px, 3vw, 16px); }
+
+    .queue-area {
+      min-height: 64px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      align-content: flex-start;
+      max-height: 130px;
+      overflow-y: auto;
+      background: #F7F4F0;
+      border-radius: 10px;
+      padding: 8px;
+      border: 1.5px dashed var(--border);
+    }
+
+    .queue-empty {
+      width: 100%;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px;
+    }
+
+    .q-chip {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      font-weight: 900;
+      color: #fff;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+
+    .q-chip.up    { background: var(--up-color); }
+    .q-chip.down  { background: var(--down-color); }
+    .q-chip.left  { background: var(--left-color); }
+    .q-chip.right { background: var(--right-color); }
+
+    .q-chip.current-step {
+      outline: 3px solid #FF6B35;
+      outline-offset: 1px;
+      transform: scale(1.2);
+    }
+
+    .q-chip.done { filter: brightness(0.6); }
+
+    .queue-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn-undo, .btn-clear {
+      flex: 1;
+      border: none;
+      border-radius: 10px;
+      padding: 8px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 13px;
+      cursor: pointer;
+      transition: transform 0.1s, filter 0.15s;
+      touch-action: manipulation;
+    }
+
+    .btn-undo  { background: #F0E6FF; color: var(--left-dark);  box-shadow: 0 3px 0 #C8A0E0; }
+    .btn-clear { background: #FFE8E8; color: #A02020;            box-shadow: 0 3px 0 #E0A0A0; }
+    .btn-undo:active, .btn-clear:active  { transform: translateY(2px); box-shadow: 0 1px 0; }
+    .btn-undo:disabled, .btn-clear:disabled { filter: opacity(0.4); cursor: not-allowed; }
+
+    .btn-exec {
+      width: 100%;
+      padding: clamp(12px, 3vw, 16px);
+      border: none;
+      border-radius: 14px;
+      background: var(--success-color);
+      color: #fff;
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(17px, 4vw, 21px);
+      cursor: pointer;
+      box-shadow: 0 6px 0 #1A7A42;
+      transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-exec:hover  { background: #22A055; }
+    .btn-exec:active { transform: translateY(4px); box-shadow: 0 2px 0 #1A7A42; }
+    .btn-exec:disabled { background: #90C8A0; cursor: not-allowed; box-shadow: 0 4px 0 #5A9A70; }
+    .btn-exec:disabled:active { transform: none; box-shadow: 0 4px 0 #5A9A70; }
+
+    .btn-reset {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--card);
+      color: var(--muted);
+      font-family: 'Fredoka One', cursive;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      touch-action: manipulation;
+    }
+
+    .btn-reset:hover { background: #F0F0F0; color: var(--text); }
+
+    .status-bar {
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(13px, 3vw, 16px);
+      text-align: center;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      background: #F4F4F4;
+      color: var(--muted);
+      border: 2px solid var(--border);
+    }
+
+    .status-bar.success { background: #E8FBF0; color: var(--success-color); border-color: var(--success-color); }
+    .status-bar.error   { background: #FFE8E8; color: var(--error-color);   border-color: var(--error-color); }
+    .status-bar.running { background: #EEF6FF; color: var(--robot-color);   border-color: var(--robot-color); }
+    .status-bar.warn    { background: #FFF9D6; color: #7a5c00;               border-color: var(--target-color); }
+
+    .speed-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .speed-row input[type=range] {
+      flex: 1;
+      accent-color: var(--robot-color);
+    }
+
+    .confetti-wrap {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      top: -10px;
+      width: 10px;
+      height: 14px;
+      border-radius: 3px;
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      background: var(--card);
+      border-radius: 8px;
+      padding: 3px 8px;
+      border: 1.5px solid var(--border);
+    }
+
+    .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+
+    .about-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 0;
+      background: none;
+      border: none;
+      font-family: 'Nunito', sans-serif;
+      touch-action: manipulation;
+    }
+
+    .about-toggle:hover { color: var(--robot-color); }
+
+    .about-content {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+
+    .about-content b { color: var(--text); }
+    .about-content.hidden { display: none; }
+
+    @media (min-width: 700px) {
+      .app-main { flex-direction: row; align-items: flex-start; padding: 16px; gap: 16px; }
+      .grid-section { width: clamp(280px, 48%, 460px); }
+      .cell {
+        width:  clamp(42px, calc((min(48vw, 460px) - 36px) / 6), 72px);
+        height: clamp(42px, calc((min(48vw, 460px) - 36px) / 6), 72px);
+      }
+    }
+
+    @media (max-width: 360px) {
+      .app-main   { padding: 8px; gap: 8px; }
+      .panel      { padding: 9px; }
+      .target-hint { display: none; }
+      .cmd-label  { font-size: 11px; }
+    }
   </style>
 </head>
 <body>
 
-  <div id="pc-blocker">
-    <div style="font-size: 60px;">🚫</div>
-    <h1>Acesso Negado</h1>
-    <p>O <b>Mostrabot</b> só funciona em <b>Celulares e Tablets</b>.</p>
+<header class="app-header">
+  <div class="header-brand">
+    <span class="brand-robot">🤖</span>
+    <div class="brand-text">
+      <div class="brand-title">Mostrabot</div>
+      <div class="brand-sub">Kit EJR · Primeiros Passos</div>
+    </div>
   </div>
+  <div class="header-step" id="step-display">
+    Passo <b id="step-num">—</b>
+  </div>
+</header>
 
-  <div id="app-content">
-    <header class="app-header">
-      <div class="brand">🤖 Mostrabot</div>
-      <div id="step-info" style="font-weight:900; color:#777">Passo: —</div>
-    </header>
+<div class="confetti-wrap" id="confetti-wrap"></div>
 
-    <main class="app-main">
-      <div style="display:flex; justify-content: space-between; align-items:center;">
-        <div style="font-weight:900">🎯 Alvo: <span id="target-txt" style="color:var(--up-color)">?</span></div>
-        <button onclick="setRandomTarget()" style="padding:5px 10px; border-radius:8px; border:1px solid #ccc; background:#fff; font-weight:bold">🎲 Sortear</button>
-      </div>
+<main class="app-main">
+  <section class="grid-section">
+    <div class="target-display">
+      <span class="target-label">🎯 Destino:</span>
+      <span class="target-val" id="target-letter">?</span>
+      <span class="target-hint">clique na grade para escolher</span>
+      <button class="btn-random" id="btn-random" onclick="setRandomTarget()" title="Sortear destino">🎲 Sortear</button>
+    </div>
 
+    <div class="grid-wrap">
       <div class="grid" id="grid"></div>
-      <div class="status" id="status-bar">Programe os movimentos!</div>
+    </div>
 
-      <div class="controls">
-        <div class="cmd-grid">
-          <button class="btn up" onclick="addCmd('up')"><span>↑</span>FRENTE</button>
-          <button class="btn left" onclick="addCmd('left')"><span>←</span>ESQ</button>
-          <button class="btn down" onclick="addCmd('down')"><span>↓</span>TRÁS</button>
-          <button class="btn right" onclick="addCmd('right')"><span>→</span>DIR</button>
-        </div>
-        <button class="btn exec-btn" id="btn-exec" onclick="run()">▶ EXECUTAR</button>
-        <button onclick="resetAll()" style="background:none; border:none; color:#777; font-weight:bold; text-decoration:underline; margin-top:5px">Reiniciar</button>
+    <div class="legend-row">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--robot-color);"></div> Mostrabot</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--target-color); border:1px solid #c89a00;"></div> Destino</div>
+      <div class="legend-item"><span style="font-size:11px;">👆</span> Toque p/ mover destino</div>
+    </div>
+  </section>
+
+  <section class="controls-section">
+    <div class="status-bar" id="status-bar">
+      Escolha o destino e programe o Mostrabot! 🚀
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">🧩 Blocos de Comando</div>
+      <div class="cmd-grid">
+        <button class="cmd-btn up"    onclick="addCmd('up')"    id="btn-up">
+          <span class="cmd-arrow">⬆️</span><span class="cmd-label">Para Frente</span>
+        </button>
+        <button class="cmd-btn left"  onclick="addCmd('left')"  id="btn-left">
+          <span class="cmd-arrow">⬅️</span><span class="cmd-label">Esquerda</span>
+        </button>
+        <button class="cmd-btn right" onclick="addCmd('right')" id="btn-right">
+          <span class="cmd-arrow">➡️</span><span class="cmd-label">Direita</span>
+        </button>
+        <button class="cmd-btn down"  onclick="addCmd('down')"  id="btn-down">
+          <span class="cmd-arrow">⬇️</span><span class="cmd-label">Para Trás</span>
+        </button>
       </div>
-    </main>
-  </div>
+    </div>
 
-  <!-- SONS -->
-  <audio id="snd-move" src="move.mp3"></audio>
-  <audio id="snd-win" src="win.mp3"></audio>
-  <audio id="snd-error" src="error.mp3"></audio>
+    <div class="panel">
+      <div class="panel-title">📋 Sequência de Comandos <span id="cmd-count" style="font-size:13px;color:var(--muted);">(0)</span></div>
+      <div class="queue-area" id="queue">
+        <div class="queue-empty" id="queue-empty">Adicione blocos de comando aqui!</div>
+      </div>
+      <div class="queue-actions">
+        <button class="btn-undo"  onclick="undoCmd()"   id="btn-undo">↩ Desfazer</button>
+        <button class="btn-clear" onclick="clearCmds()" id="btn-clear">🗑 Apagar Tudo</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">⚡ Velocidade de Execução</div>
+      <div class="speed-row">
+        <span>🐢</span>
+        <input type="range" id="speed-slider" min="1" max="5" value="3" step="1" />
+        <span>🐇</span>
+        <span id="speed-label" style="min-width:60px;font-size:12px;">Normal</span>
+      </div>
+    </div>
+
+    <button class="btn-exec" id="btn-exec" onclick="executeCommands()">
+      ▶ Executar Programa
+    </button>
+
+    <button class="btn-reset" id="btn-reset" onclick="resetAll()">
+      🔄 Reiniciar Tudo
+    </button>
+
+    <div class="panel">
+      <button class="about-toggle" onclick="toggleAbout()">
+        ℹ️ Sobre a atividade <span id="about-arrow">▼</span>
+      </button>
+      <div class="about-content hidden" id="about-content">
+        Inspirado nos princípios de <b>Seymour Papert</b> e na lógica da linguagem <b>LOGO</b>,
+        o Mostrabot ensina pensamento computacional por meio da experimentação.
+        As crianças montam sequências de blocos (Para Frente, Para Trás, Esquerda, Direita)
+        para conduzir o robô até a letra ou número escolhido.
+        O erro é parte do aprendizado — ajuste a sequência e tente novamente! 🌟
+      </div>
+    </div>
+  </section>
+</main>
 
 <script>
-  const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
-  let robot = { r: 0, c: 0 }, target = null, cmds = [], running = false;
+// ═══════════════════════════════════════════════════════════════════════════
+// SONS (Web Audio API)
+// ═══════════════════════════════════════════════════════════════════════════
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-  // Toca som com segurança
-  function playSound(id) {
-    const s = document.getElementById(id);
-    if(s) { s.currentTime = 0; s.play().catch(()=>{}); }
-  }
+function playSound(type) {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
 
-  function buildGrid() {
-    const g = document.getElementById('grid');
-    g.innerHTML = '';
-    CHARS.forEach((ch, i) => {
-      const cell = document.createElement('div');
-      cell.className = 'cell';
-      cell.id = `c-${Math.floor(i/6)}-${i%6}`;
-      cell.textContent = ch;
-      cell.onclick = () => { if(!running) setTarget(Math.floor(i/6), i%6); };
-      g.appendChild(cell);
-    });
-    render();
-  }
+    const now = audioCtx.currentTime;
 
-  function setTarget(r, c) {
-    target = { r, c };
-    document.getElementById('target-txt').textContent = CHARS[r*6+c];
-    render();
-  }
-
-  function setRandomTarget() {
-    setTarget(Math.floor(Math.random()*6), Math.floor(Math.random()*6));
-  }
-
-  function addCmd(d) { 
-    if(!running && cmds.length < 20) { 
-      cmds.push(d); 
-      document.getElementById('status-bar').textContent = `Comandos: ${cmds.length}`;
+    if (type === 'step') {
+        // Som de "beep" curto para o passo
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.start(now);
+        osc.stop(now + 0.1);
     } 
-  }
+    else if (type === 'success') {
+        // Melodia de vitória (Do-Mi-Sol-Do alto)
+        const notes = [523, 659, 783, 1046];
+        notes.forEach((freq, i) => {
+            const o = audioCtx.createOscillator();
+            const g = audioCtx.createGain();
+            o.connect(g);
+            g.connect(audioCtx.destination);
+            o.type = 'triangle';
+            o.frequency.setValueAtTime(freq, now + i * 0.1);
+            g.gain.setValueAtTime(0.1, now + i * 0.1);
+            g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.1 + 0.2);
+            o.start(now + i * 0.1);
+            o.stop(now + i * 0.1 + 0.2);
+        });
+    } 
+    else if (type === 'error') {
+        // Som de erro grave e descendente
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(50, now + 0.4);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.4);
+        osc.start(now);
+        osc.stop(now + 0.4);
+    }
+}
 
-  function render() {
-    document.querySelectorAll('.cell').forEach((el, i) => {
-      const r = Math.floor(i/6), c = i%6;
-      el.className = 'cell';
-      if(r === robot.r && c === robot.c) {
-        el.classList.add('robot'); el.textContent = '🤖';
-      } else {
-        if(target && r === target.r && c === target.c) el.classList.add('target');
-        el.textContent = CHARS[i];
-      }
+// ═══════════════════════════════════════════════════════════════════════════
+// CONSTANTS
+// ═══════════════════════════════════════════════════════════════════════════
+const COLS = 6, ROWS = 6;
+const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'.split('');
+
+const DIRS = {
+  up:    { dr: -1, dc:  0, arrow: '⬆', label: 'Para Frente' },
+  down:  { dr:  1, dc:  0, arrow: '⬇', label: 'Para Trás'    },
+  left:  { dr:  0, dc: -1, arrow: '⬅', label: 'Esquerda'     },
+  right: { dr:  0, dc:  1, arrow: '➡', label: 'Direita'      },
+};
+
+const SPEED_MAP    = { 1: 900, 2: 600, 3: 380, 4: 220, 5: 100 };
+const SPEED_LABELS = { 1: 'Muito Lento', 2: 'Lento', 3: 'Normal', 4: 'Rápido', 5: 'Turbo 🚀' };
+
+let robot    = { row: 0, col: 0 };
+let target   = null;
+let commands = [];
+let executing = false;
+let execAbort = false;
+
+function init() {
+  buildGrid();
+  renderAll();
+  updateButtons();
+  document.getElementById('speed-slider').addEventListener('input', updateSpeedLabel);
+  updateSpeedLabel();
+}
+
+function buildGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  CHARS.forEach((ch, idx) => {
+    const row = Math.floor(idx / COLS);
+    const col = idx % COLS;
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.dataset.row = row;
+    cell.dataset.col = col;
+    cell.dataset.ch  = ch;
+    cell.id = `cell-${row}-${col}`;
+    cell.addEventListener('click', () => onCellClick(row, col));
+    grid.appendChild(cell);
+  });
+}
+
+function renderAll() {
+  renderGrid();
+  renderQueue();
+}
+
+function renderGrid() {
+  CHARS.forEach((ch, idx) => {
+    const row = Math.floor(idx / COLS);
+    const col = idx % COLS;
+    const cell = document.getElementById(`cell-${row}-${col}`);
+    const isRobot  = robot.row === row && robot.col === col;
+    const isTgt    = target && target.row === row && target.col === col;
+    const bothOnIt = isRobot && isTgt;
+
+    cell.className = 'cell';
+    if (bothOnIt)       cell.classList.add('robot-on-target');
+    else if (isRobot)   cell.classList.add('robot-cell');
+    else if (isTgt)     cell.classList.add('target-cell');
+
+    if (isRobot) cell.textContent = '🤖';
+    else          cell.textContent = ch;
+  });
+}
+
+function renderQueue() {
+  const queueEl = document.getElementById('queue');
+  const emptyEl = document.getElementById('queue-empty');
+  const countEl = document.getElementById('cmd-count');
+  countEl.textContent = `(${commands.length})`;
+  if (commands.length === 0) {
+    emptyEl.style.display = 'block';
+    queueEl.querySelectorAll('.q-chip').forEach(c => c.remove());
+    return;
+  }
+  emptyEl.style.display = 'none';
+  queueEl.querySelectorAll('.q-chip').forEach(c => c.remove());
+  commands.forEach((cmd, i) => {
+    const chip = document.createElement('div');
+    chip.className = `q-chip ${cmd}`;
+    chip.id = `chip-${i}`;
+    chip.textContent = DIRS[cmd].arrow;
+    chip.title = DIRS[cmd].label;
+    queueEl.appendChild(chip);
+  });
+}
+
+function onCellClick(row, col) {
+  if (executing) return;
+  if (robot.row === row && robot.col === col) return;
+  target = { row, col };
+  document.getElementById('target-letter').textContent = CHARS[row * COLS + col];
+  setStatus('neutral', `Destino definido: ${CHARS[row * COLS + col]} — Agora programe o Mostrabot! 🤖`);
+  renderGrid();
+  updateButtons();
+}
+
+function setRandomTarget() {
+  if (executing) return;
+  let r, c;
+  do {
+    r = Math.floor(Math.random() * ROWS);
+    c = Math.floor(Math.random() * COLS);
+  } while (r === robot.row && c === robot.col);
+  onCellClick(r, c);
+}
+
+function addCmd(dir) {
+  if (executing) return;
+  if (commands.length >= 24) {
+    setStatus('warn', 'Sequência máxima de 24 comandos atingida!');
+    return;
+  }
+  commands.push(dir);
+  renderQueue();
+  updateButtons();
+  if (!target) setStatus('warn', 'Não esqueça de escolher um destino! 🎯');
+  else setStatus('neutral', `Bloco adicionado: ${DIRS[dir].label} — Total: ${commands.length} comandos`);
+}
+
+function undoCmd() {
+  if (executing || commands.length === 0) return;
+  commands.pop();
+  renderQueue();
+  updateButtons();
+}
+
+function clearCmds() {
+  if (executing) return;
+  commands = [];
+  renderQueue();
+  updateButtons();
+}
+
+async function executeCommands() {
+  if (executing) return;
+  if (!target) { setStatus('warn', '⚠️ Escolha um destino primeiro!'); return; }
+  if (commands.length === 0) { setStatus('warn', '⚠️ Adicione comandos!'); return; }
+  
+  // Ativa áudio (necessário em alguns navegadores após interação)
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  executing  = true;
+  execAbort  = false;
+  setControlsDisabled(true);
+  setStatus('running', '▶ Executando...');
+
+  const delay = SPEED_MAP[document.getElementById('speed-slider').value];
+  let pos = { ...robot };
+
+  for (let i = 0; i < commands.length; i++) {
+    if (execAbort) break;
+
+    document.querySelectorAll('.q-chip').forEach((c, ci) => {
+      c.classList.remove('current-step', 'done');
+      if (ci < i)  c.classList.add('done');
+      if (ci === i) c.classList.add('current-step');
     });
-  }
 
-  async function run() {
-    if(running || !target || !cmds.length) return;
-    running = true;
-    const btn = document.getElementById('btn-exec');
-    btn.style.opacity = '0.5';
+    document.getElementById('step-num').textContent = `${i + 1} / ${commands.length}`;
+    const dir    = DIRS[commands[i]];
+    const newRow = pos.row + dir.dr;
+    const newCol = pos.col + dir.dc;
 
-    const queue = [...cmds];
-    cmds = [];
+    await sleep(delay);
 
-    for(let i=0; i<queue.length; i++) {
-      document.getElementById('step-info').textContent = `Passo: ${i+1}`;
-      const move = { up: [-1,0], down: [1,0], left: [0,-1], right: [0,1] }[queue[i]];
-      let nR = robot.r + move[0], nC = robot.c + move[1];
-
-      if(nR < 0 || nR > 5 || nC < 0 || nC > 5) {
-        setStatus("💥 Bateu!", "#ff0000");
-        playSound('snd-error');
-        break;
-      }
-      
-      robot.r = nR; robot.c = nC;
-      playSound('snd-move');
-      render();
-      await new Promise(r => setTimeout(r, 500));
+    if (newRow < 0 || newRow >= ROWS || newCol < 0 || newCol >= COLS) {
+      playSound('error'); // SOM DE ERRO
+      await flashCell(pos.row, pos.col, '#FFE0E0');
+      setStatus('error', `💥 Saiu do mapa no passo ${i + 1}!`);
+      finishExec(false);
+      return;
     }
 
-    if(robot.r === target.r && robot.c === target.c) {
-      setStatus("🎉 CONSEGUI!", "#27AE60");
-      playSound('snd-win');
-    } else {
-      setStatus("❌ Tente de novo", "#E8773A");
-    }
-    
-    running = false;
-    btn.style.opacity = '1';
+    playSound('step'); // SOM DE PASSO
+    pos.row = newRow;
+    pos.col = newCol;
+    robot   = { ...pos };
+    renderGrid();
+    await flashCell(pos.row, pos.col, pos.row === target.row && pos.col === target.col ? '#D5F5E3' : '#EEF6FF');
   }
 
-  function setStatus(t, c) {
-    const s = document.getElementById('status-bar');
-    s.textContent = t; s.style.color = c;
-  }
+  await sleep(200);
 
-  function resetAll() {
-    robot = {r:0, c:0}; target = null; cmds = [];
-    document.getElementById('target-txt').textContent = '?';
-    document.getElementById('step-info').textContent = 'Passo: —';
-    setStatus("Programe os movimentos!", "#000");
-    render();
+  if (robot.row === target.row && robot.col === target.col) {
+    playSound('success'); // SOM DE ACERTO
+    setStatus('success', `🎉 Chegou no destino! Parabéns!`);
+    launchConfetti();
+  } else {
+    playSound('error'); // SOM DE ERRO (não chegou no destino)
+    setStatus('error', `❌ Não foi desta vez. Tente ajustar os comandos!`);
   }
+  finishExec(true);
+}
 
-  window.onload = buildGrid;
+function finishExec(success) {
+  executing = false;
+  setControlsDisabled(false);
+  updateButtons();
+}
+
+function resetAll() {
+  if (executing) execAbort = true;
+  robot = { row: 0, col: 0 };
+  target = null;
+  commands = [];
+  document.getElementById('target-letter').textContent = '?';
+  document.getElementById('step-num').textContent = '—';
+  setStatus('neutral', 'Tudo reiniciado! Escolha o destino.');
+  renderAll();
+  updateButtons();
+}
+
+function setStatus(type, msg) {
+  const bar = document.getElementById('status-bar');
+  bar.className = 'status-bar ' + type;
+  bar.textContent = msg;
+}
+
+function setControlsDisabled(disabled) {
+  const ids = ['btn-up', 'btn-down', 'btn-left', 'btn-right', 'btn-undo', 'btn-clear', 'btn-exec', 'btn-random'];
+  ids.forEach(id => document.getElementById(id).disabled = disabled);
+}
+
+function updateButtons() {
+  const hasCmds = commands.length > 0;
+  document.getElementById('btn-undo').disabled = executing || !hasCmds;
+  document.getElementById('btn-clear').disabled = executing || !hasCmds;
+  document.getElementById('btn-exec').disabled = executing || !hasCmds || !target;
+}
+
+function updateSpeedLabel() {
+  const val = document.getElementById('speed-slider').value;
+  document.getElementById('speed-label').textContent = SPEED_LABELS[val];
+}
+
+function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+async function flashCell(r, c, color) {
+  const el = document.getElementById(`cell-${r}-${c}`);
+  const oldBg = el.style.background;
+  el.style.background = color;
+  await sleep(150);
+  el.style.background = oldBg;
+}
+
+function toggleAbout() {
+  const content = document.getElementById('about-content');
+  const arrow = document.getElementById('about-arrow');
+  const isHidden = content.classList.toggle('hidden');
+  arrow.textContent = isHidden ? '▼' : '▲';
+}
+
+function launchConfetti() {
+  const wrap = document.getElementById('confetti-wrap');
+  const colors = ['#3A8FE8', '#E8773A', '#9B59B6', '#27AE60', '#F5C842'];
+  for (let i = 0; i < 50; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.transform = `rotate(${Math.random() * 360}deg)`;
+    const duration = 2 + Math.random() * 3;
+    p.style.animationDuration = duration + 's';
+    p.style.animationDelay = Math.random() * 2 + 's';
+    wrap.appendChild(p);
+    setTimeout(() => p.remove(), (duration + 2) * 1000);
+  }
+}
+
+init();
 </script>
 </body>
 </html>
